@@ -3,6 +3,7 @@ package objects;
 import enums.Command;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class Message {
 
@@ -20,14 +21,6 @@ public class Message {
         this.cType = cType;
         this.bUserId = bUserId;
         this.message = message;
-    }
-
-    public byte[] toByteArray(){
-        return ByteBuffer.allocate(BytesSize.allExceptMessage + message.length)
-                .putInt(cType.code)
-                .putInt(bUserId)
-                .put(message)
-                .array();
     }
 
     public Command getCType() {
