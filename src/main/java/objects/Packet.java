@@ -10,6 +10,16 @@ public class Packet {
     private Message bMsg;
     private short w2Crc16;
 
+    public static class BytesSize{
+        public static int bMagic = 1;
+        public static int bSrc = 1;
+        public static int bPktId = 8;
+        public static int wLen = 4;
+        public static int wCrc16 = 2;
+        public static int w2Crc16 = 2;
+        public static int allExceptMessage = 18;
+    }
+
     public Packet(byte bSrc, long bPktId, int wLen,
                   short wCrc16, Message bMsg, short w2Crc16) {
         this.bSrc = bSrc;
@@ -18,6 +28,10 @@ public class Packet {
         this.wCrc16 = wCrc16;
         this.bMsg = bMsg;
         this.w2Crc16 = w2Crc16;
+    }
+
+    public byte getBMagic() {
+        return bMagic;
     }
 
     public byte getBSrc() {
