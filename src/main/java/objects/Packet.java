@@ -30,6 +30,12 @@ public class Packet {
         this.w2Crc16 = w2Crc16;
     }
 
+    public Packet(byte bSrc, long bPktId, Message bMsg) {
+        this.bSrc = bSrc;
+        this.bPktId = bPktId;
+        this.bMsg = bMsg;
+    }
+
     public byte getBMagic() {
         return bMagic;
     }
