@@ -2,8 +2,8 @@ package objects;
 
 import enums.Command;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Message {
 
@@ -12,9 +12,9 @@ public class Message {
     private byte[] message;
 
     public static class BytesSize{
-        public static int cType = 4;
-        public static int bUserId = 4;
-        public static int allExceptMessage = 8;
+        public static final int C_TYPE = 4;
+        public static final int B_USER_ID = 4;
+        public static final int ALL_EXCEPT_MESSAGE = 8;
     }
 
     public Message(Command cType, int bUserId, byte[] message) {
@@ -45,5 +45,25 @@ public class Message {
 
     public void setMessage(byte[] message) {
         this.message = message;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Message message1 = (Message) o;
+        return bUserId == message1.bUserId && cType == message1.cType && Arrays.equals(message, message1.message);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(cType, bUserId);
+        result = 31 * result + Arrays.hashCode(message);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Message: \n Command = " + cType + "\n bUserId = " + bUserId + "\n message text = " + new String(message);
     }
 }

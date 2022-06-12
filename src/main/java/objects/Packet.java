@@ -1,8 +1,11 @@
 package objects;
 
+import java.util.Objects;
+
 public class Packet {
 
-    private final byte bMagic = 0x13;
+    public static final byte B_MAGIC = 0x13;
+
     private byte bSrc;
     private long bPktId;
     private int wLen;
@@ -11,33 +14,22 @@ public class Packet {
     private short w2Crc16;
 
     public static class BytesSize{
-        public static int bMagic = 1;
-        public static int bSrc = 1;
-        public static int bPktId = 8;
-        public static int wLen = 4;
-        public static int wCrc16 = 2;
-        public static int w2Crc16 = 2;
-        public static int allExceptMessage = 18;
-    }
 
-    public Packet(byte bSrc, long bPktId, int wLen,
-                  short wCrc16, Message bMsg, short w2Crc16) {
-        this.bSrc = bSrc;
-        this.bPktId = bPktId;
-        this.wLen = wLen;
-        this.wCrc16 = wCrc16;
-        this.bMsg = bMsg;
-        this.w2Crc16 = w2Crc16;
+        public static final int B_MAGIC = 1;
+        public static final int B_SRC = 1;
+        public static final int B_PKT_ID = 8;
+        public static final int W_LEN = 4;
+
+        public static final int HEADER_SIZE = B_MAGIC + B_SRC + B_PKT_ID + W_LEN;
+
+        public static final int W_CRC_16 = 2;
+        public static final int W_2_CRC_16 = 2;
     }
 
     public Packet(byte bSrc, long bPktId, Message bMsg) {
         this.bSrc = bSrc;
         this.bPktId = bPktId;
         this.bMsg = bMsg;
-    }
-
-    public byte getBMagic() {
-        return bMagic;
     }
 
     public byte getBSrc() {
@@ -86,5 +78,23 @@ public class Packet {
 
     public void setW2Crc16(short w2Crc16) {
         this.w2Crc16 = w2Crc16;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Packet packet = (Packet) o;
+        return bSrc == packet.bSrc && bPktId == packet.bPktId && wLen == packet.wLen && wCrc16 == packet.wCrc16 && w2Crc16 == packet.w2Crc16 && Objects.equals(bMsg, packet.bMsg);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bSrc, bPktId, wLen, wCrc16, bMsg, w2Crc16);
+    }
+
+    @Override
+    public String toString() {
+        return "Packet: \nbSrc = " + bSrc + "\nbPktId = " + bPktId + "\n"+ bMsg;
     }
 }
