@@ -35,6 +35,8 @@ public class Storage {
     public void initData(){
         productMap = new HashMap<>();
         groupMap = new HashMap<>();
+        productId = 0;
+        groupId = 0;
         ProductGroup group0 = new ProductGroup(groupId++,"Group0");
         ProductGroup group1 = new ProductGroup(groupId++,"Group1");
         groupMap.put(group0.getName(),group0);
@@ -70,7 +72,8 @@ public class Storage {
         Product product = productMap.get(productName);
         synchronized (product){
             int currentQuantity = product.getQuantity();
-            if(quantity>currentQuantity) throw new Exception("Product quantity is not sufficient!");
+            if(quantity>currentQuantity)
+                throw new Exception("Product quantity is not sufficient!");
             product.setQuantity(currentQuantity-quantity);
         }
     }

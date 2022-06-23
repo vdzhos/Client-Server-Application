@@ -38,7 +38,9 @@ public class ReceiverImpl implements ReceiverInterface {
         executor = Executors.newFixedThreadPool(Values.NUMBER_OF_THREADS);
     }
 
-    private void initializeReceivingThread() {
+    private void initializeAllExecutors() {
+        SenderImpl.setCountResponsesSent(0);
+        this.packets = null;
         packetReceiver = new Thread(() -> {
             receivePacket();
             try {
@@ -110,7 +112,7 @@ public class ReceiverImpl implements ReceiverInterface {
 
     @Override
     public void startReceiving() throws InterruptedException {
-        initializeReceivingThread();
+        initializeAllExecutors();
         packetReceiver.start();
         packetReceiver.join();
         started = true;
@@ -118,7 +120,7 @@ public class ReceiverImpl implements ReceiverInterface {
 
     @Override
     public void startReceiving(List<Packet> packets) throws InterruptedException {
-        initializeReceivingThread();
+        initializeAllExecutors();
         this.packets = packets;
         packetReceiver.start();
         packetReceiver.join();

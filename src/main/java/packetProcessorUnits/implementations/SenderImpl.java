@@ -6,7 +6,7 @@ import packetProcessorUnits.interfaces.SenderInterface;
 public class SenderImpl implements SenderInterface {
 
     private static SenderImpl instance;
-    private static long countResponsesSent = 0;
+    private static Long countResponsesSent = 0L;
 
     public static SenderImpl getInstance() {
         if (instance == null)
@@ -17,14 +17,21 @@ public class SenderImpl implements SenderInterface {
     private SenderImpl() {}
 
     @Override
-    public void send(byte[] encodedResponse) throws Exception {
-        countResponsesSent++;
-        Packet decodedPacket = Decoder.getInstance().decode(encodedResponse);
-        System.out.println(decodedPacket);
-        System.out.println("--------------------------");
+    public  void send(byte[] encodedResponse) throws Exception {
+        synchronized (countResponsesSent) {
+            countResponsesSent++;
+            Packet decodedPacket = Decoder.getInstance().decode(encodedResponse);
+            System.out.println(decodedPacket);
+            System.out.println("--------------------------");
+        }
+
     }
 
     public static long getCountResponsesSent() {
         return countResponsesSent;
+    }
+
+    public static void setCountResponsesSent(long countResponsesSent) {
+        SenderImpl.countResponsesSent = countResponsesSent;
     }
 }
