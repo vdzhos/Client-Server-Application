@@ -1,4 +1,4 @@
-package packetProcessorUnits;
+package packetProcessorUnits.implementations;
 
 import objects.Message;
 import objects.Packet;

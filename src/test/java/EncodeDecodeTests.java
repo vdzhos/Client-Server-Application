@@ -3,8 +3,8 @@ import objects.Message;
 import objects.Packet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import packetProcessorUnits.Decoder;
-import packetProcessorUnits.Encoder;
+import packetProcessorUnits.implementations.Decoder;
+import packetProcessorUnits.implementations.Encoder;
 
 import java.util.Arrays;
 

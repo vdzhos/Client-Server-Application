@@ -1,5 +1,14 @@
 package utils;
 
+import enums.Command;
+import model.Storage;
+import objects.Message;
+import objects.Packet;
+import org.json.JSONObject;
+
+import java.util.Random;
+import java.util.Set;
+
 public class PacketUtils {
 
     public static short crc16(byte[] bytes) {
@@ -44,6 +53,47 @@ public class PacketUtils {
         }
 
         return (short) crc;
+    }
+
+    public static Packet generatePacket(long bPktId){
+        byte bSrc = (byte) new Random().nextInt(5);
+        int bUserId = new Random().nextInt(20);
+        Command command = Command.valueOf(new Random().nextInt(Command.values().length));
+        JSONObject json = new JSONObject();
+        Storage storage = Storage.getInstance();
+        String name;
+        int quantity;
+        switch (command){
+            case GET_PRODUCT_QUANTITY:
+                name = Utils.getRandomStringFromSet(storage.getProductMap().keySet());
+                json.put("productName",name);
+                break;
+            case DECREASE_PRODUCT_QUANTITY: case INCREASE_PRODUCT_QUANTITY:
+                name = Utils.getRandomStringFromSet(storage.getProductMap().keySet());
+                json.put("productName",name);
+                quantity = new Random().nextInt(30)+1;
+                json.put("quantity",quantity);
+                break;
+            case ADD_PRODUCT_GROUP:
+                name = "Group" + (new Random().nextInt(5)+1);
+                json.put("groupName",name);
+                break;
+            case ADD_PRODUCT_TO_GROUP:
+                name = "Product" + (new Random().nextInt(30)+1);
+                json.put("productName",name);
+                name = Utils.getRandomStringFromSet(storage.getProductGroupMap().keySet());
+                json.put("groupName",name);
+                break;
+            case SET_PRODUCT_PRICE:
+                name = Utils.getRandomStringFromSet(storage.getProductMap().keySet());
+                json.put("productName",name);
+                double price = Utils.getRandomDouble(100,2);
+                json.put("price",price);
+                break;
+        }
+        byte[] messageBytes = json.toString().getBytes();
+        Message message = new Message(command,bUserId,messageBytes);
+        return new Packet(bSrc,bPktId,message);
     }
 
 }

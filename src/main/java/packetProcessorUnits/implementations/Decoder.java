@@ -1,4 +1,4 @@
-package packetProcessorUnits;
+package packetProcessorUnits.implementations;
 
 import enums.Command;
 import objects.Message;
