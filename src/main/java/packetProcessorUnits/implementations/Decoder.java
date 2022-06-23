@@ -5,6 +5,7 @@ import objects.Message;
 import objects.Packet;
 import utils.CBCUtils;
 import utils.PacketUtils;
+import utils.Values;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -14,10 +15,45 @@ import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Decoder {
 
-    public static Packet decode(byte[] bytes) throws Exception {
+    private static Decoder instance;
+
+    private ExecutorService executor;
+    private Processor processor;
+
+    public static Decoder getInstance() {
+        if (instance == null)
+            instance = new Decoder();
+        return instance;
+    }
+
+    private Decoder() {
+        executor = Executors.newFixedThreadPool(Values.NUMBER_OF_THREADS);
+        processor = Processor.getInstance();
+    }
+
+    public void submitDecodeTask(byte[] packetBytes) {
+        executor.submit(() -> {
+            try {
+                Packet packet = decode(packetBytes);
+                processor.submitProcessTask(packet);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void shutdown() throws InterruptedException {
+        executor.shutdown();
+        while (!executor.awaitTermination(60L, TimeUnit.SECONDS)) {}
+    }
+
+    public Packet decode(byte[] bytes) throws Exception {
         ByteBuffer wrapBytes = ByteBuffer.wrap(bytes);
 
         byte bMagic = wrapBytes.get();
@@ -49,10 +85,11 @@ public class Decoder {
 
         Message message = decodeMessage(messageBytes);
 
+//        System.out.println(Thread.currentThread());
         return new Packet(bSrc, bPktId, message);
     }
 
-    private static Message decodeMessage(byte[] bytes) throws Exception {
+    private Message decodeMessage(byte[] bytes) throws Exception {
         try {
             ByteBuffer wrapBytes = ByteBuffer.wrap(bytes);
 
@@ -74,7 +111,7 @@ public class Decoder {
         }
     }
 
-    private static byte[] decryptMessage(byte[] messageEncrypted) throws NoSuchPaddingException, NoSuchAlgorithmException,
+    private byte[] decryptMessage(byte[] messageEncrypted) throws NoSuchPaddingException, NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
 
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");

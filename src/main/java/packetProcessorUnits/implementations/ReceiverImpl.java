@@ -1,27 +1,41 @@
 package packetProcessorUnits.implementations;
 
-import model.Storage;
 import objects.Packet;
 import packetProcessorUnits.interfaces.ReceiverInterface;
 import utils.PacketUtils;
 
-import java.util.List;
 import java.util.Random;
 
 public class ReceiverImpl implements ReceiverInterface {
 
+    private static final int PACKET_QUANTITY = 10;
+
+    private static ReceiverImpl instance;
+
+    private Encoder encoder;
+    private Decoder decoder;
+    private Processor processor;
+
     private Thread packetReceiver;
-    private int packetQuantity;
 
-    private Storage storage;
+    public static ReceiverImpl getInstance() {
+        if (instance == null)
+            instance = new ReceiverImpl();
+        return instance;
+    }
 
-    public ReceiverImpl(int packetQuantity) {
-        this.packetQuantity = packetQuantity;
-        this.storage = Storage.getInstance();
-        packetReceiver = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                receivePacket();
+    private ReceiverImpl() {
+        this.encoder = Encoder.getInstance();
+        this.decoder = Decoder.getInstance();
+        this.processor = Processor.getInstance();
+        packetReceiver = new Thread(() -> {
+            receivePacket();
+            try {
+                decoder.shutdown();
+                processor.shutdown();
+                encoder.shutdown();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
         packetReceiver.setDaemon(true);
@@ -29,16 +43,24 @@ public class ReceiverImpl implements ReceiverInterface {
 
     @Override
     public void receivePacket() {
-        for (int i = 0; i < packetQuantity; i++) {
+        for (int i = 0; i < PACKET_QUANTITY; i++) {
             try {
-                long delayTime = new Random().nextInt(2000);
-                Thread.sleep(delayTime);
+                long delayTime = new Random().nextInt(750);
+//                Thread.sleep(delayTime);
+                Thread.sleep(0);
                 Packet packet = PacketUtils.generatePacket(i);
-                System.out.println(packet);
-            } catch (InterruptedException e) {
+                byte[] encodedPacket = encoder.encode(packet);
+                decoder.submitDecodeTask(encodedPacket);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void startReceiving() throws InterruptedException {
+        packetReceiver.start();
+        packetReceiver.join();
     }
 
 }

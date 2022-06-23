@@ -18,8 +18,8 @@ public class EncodeDecodeTests {
         Packet initialPacket = new Packet((byte) 1,1L, message);
 
         try {
-            byte[] encodedPacket = Encoder.encode(initialPacket);
-            Packet decodedPacket = Decoder.decode(encodedPacket);
+            byte[] encodedPacket = Encoder.getInstance().encode(initialPacket);
+            Packet decodedPacket = Decoder.getInstance().decode(encodedPacket);
             System.out.println("Initial packet ------ \n" + initialPacket + "\n");
             System.out.println("Encoded packet : " + new String(encodedPacket) + "\n");
             System.out.println("Decoded packet ------ \n" + decodedPacket + "\n");
@@ -41,8 +41,8 @@ public class EncodeDecodeTests {
         Packet packet2 = new Packet((byte) 1,1L, message2);
 
         try {
-            byte[] encoded1 = Encoder.encode(packet1);
-            byte[] encoded2 = Encoder.encode(packet2);
+            byte[] encoded1 = Encoder.getInstance().encode(packet1);
+            byte[] encoded2 = Encoder.getInstance().encode(packet2);
             Assertions.assertTrue(Arrays.equals(encoded1,encoded2));
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,10 +58,10 @@ public class EncodeDecodeTests {
         Packet initialPacket = new Packet((byte) 1,1L, message);
 
         try {
-            byte[] encodedPacket = Encoder.encode(initialPacket);
+            byte[] encodedPacket = Encoder.getInstance().encode(initialPacket);
             encodedPacket[14] = 0x00;
             encodedPacket[15] = 0x00;
-            Decoder.decode(encodedPacket);
+            Decoder.getInstance().decode(encodedPacket);
             // incorrect crc
             Assertions.fail();
         } catch (Exception e) {
@@ -78,10 +78,10 @@ public class EncodeDecodeTests {
         Packet initialPacket = new Packet((byte) 5,5L, message);
 
         try {
-            byte[] encodedPacket = Encoder.encode(initialPacket);
+            byte[] encodedPacket = Encoder.getInstance().encode(initialPacket);
             encodedPacket[encodedPacket.length-2] = 0x00;
             encodedPacket[encodedPacket.length-1] = 0x00;
-            Decoder.decode(encodedPacket);
+            Decoder.getInstance().decode(encodedPacket);
             // incorrect crc
             Assertions.fail();
         } catch (Exception e) {

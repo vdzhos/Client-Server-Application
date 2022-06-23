@@ -2,8 +2,10 @@ package packetProcessorUnits.implementations;
 
 import objects.Message;
 import objects.Packet;
+import packetProcessorUnits.interfaces.SenderInterface;
 import utils.CBCUtils;
 import utils.PacketUtils;
+import utils.Values;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -14,10 +16,45 @@ import java.nio.ByteOrder;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Encoder {
 
-    public static byte[] encode(Packet packet) throws Exception {
+    private static Encoder instance;
+
+    private SenderInterface sender;
+    private ExecutorService executor;
+
+    public static Encoder getInstance() {
+        if (instance == null)
+            instance = new Encoder();
+        return instance;
+    }
+
+    private Encoder() {
+        executor = Executors.newFixedThreadPool(Values.NUMBER_OF_THREADS);
+        sender = SenderImpl.getInstance();
+    }
+
+    public void submitEncodeTask(Packet packet) {
+        executor.submit(() -> {
+            try {
+                byte[] encodedResponse = encode(packet);
+                sender.send(encodedResponse);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void shutdown() throws InterruptedException {
+        executor.shutdown();
+        while (!executor.awaitTermination(60L, TimeUnit.SECONDS)) {}
+    }
+
+    public byte[] encode(Packet packet) throws Exception {
         byte[] messageBytes = encodeMessage(packet.getBMsg());
 
         byte[] bPktId = ByteBuffer.allocate(Long.BYTES).putLong(packet.getBPktId()).order(ByteOrder.BIG_ENDIAN).array();
@@ -35,6 +72,8 @@ public class Encoder {
         byte[] w2Crc16 = ByteBuffer.allocate(Short.BYTES).putShort(PacketUtils.crc16(messageBytes))
                 .order(ByteOrder.BIG_ENDIAN).array();
 
+        //        System.out.println(Thread.currentThread());
+
         return ByteBuffer.allocate(Packet.BytesSize.HEADER_SIZE + Packet.BytesSize.W_CRC_16 +
                 messageBytes.length + Packet.BytesSize.W_2_CRC_16)
                 .put(header)
@@ -44,7 +83,7 @@ public class Encoder {
                 .array();
     }
 
-    private static byte[] encodeMessage(Message message) throws Exception {
+    private byte[] encodeMessage(Message message) throws Exception {
         try {
             byte[] cTypeEndian = ByteBuffer.allocate(Integer.BYTES).putInt(message.getCType().code).order(ByteOrder.BIG_ENDIAN).array();
             byte[] bUserIdEndian = ByteBuffer.allocate(Integer.BYTES).putInt(message.getBUserId()).order(ByteOrder.BIG_ENDIAN).array();
@@ -64,7 +103,7 @@ public class Encoder {
         }
     }
 
-    private static byte[] encryptMessage(byte[] message) throws NoSuchPaddingException, NoSuchAlgorithmException,
+    private byte[] encryptMessage(byte[] message) throws NoSuchPaddingException, NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
 
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");

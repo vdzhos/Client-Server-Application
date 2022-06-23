@@ -6,8 +6,7 @@ import objects.Message;
 import objects.Packet;
 import org.json.JSONObject;
 
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class PacketUtils {
 
@@ -58,7 +57,11 @@ public class PacketUtils {
     public static Packet generatePacket(long bPktId){
         byte bSrc = (byte) new Random().nextInt(5);
         int bUserId = new Random().nextInt(20);
-        Command command = Command.valueOf(new Random().nextInt(Command.values().length));
+
+        List<Command> commands = new LinkedList<>(Arrays.asList(Command.values()));
+        commands.remove(Command.RESPONSE_OK);
+
+        Command command = commands.get(new Random().nextInt(commands.size()));
         JSONObject json = new JSONObject();
         Storage storage = Storage.getInstance();
         String name;

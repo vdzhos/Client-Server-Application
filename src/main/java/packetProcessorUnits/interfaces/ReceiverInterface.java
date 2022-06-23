@@ -4,4 +4,5 @@ public interface ReceiverInterface {
 
     void receivePacket();
 
+    void startReceiving() throws InterruptedException;
 }
