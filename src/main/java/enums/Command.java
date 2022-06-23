@@ -10,8 +10,7 @@ public enum Command {
     INCREASE_PRODUCT_QUANTITY(2),
     ADD_PRODUCT_GROUP(3),
     ADD_PRODUCT_TO_GROUP(4),
-    SET_PRODUCT_PRICE(5),
-    RESPONSE_OK(6);
+    SET_PRODUCT_PRICE(5);
 
     public final int code;
 

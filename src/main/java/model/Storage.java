@@ -13,10 +13,13 @@ import java.util.Random;
 @Setter
 public class Storage {
 
+    private static long productId = 0;
+    private static long groupId = 0;
+
     private static Storage instance;
 
     private Map<String, Product> productMap;
-    private Map<String, ProductGroup> productGroupMap;
+    private Map<String, ProductGroup> groupMap;
 
     public static Storage getInstance(){
         if(instance == null){
@@ -27,23 +30,22 @@ public class Storage {
 
     private Storage() {
         productMap = new HashMap<>();
-        productGroupMap = new HashMap<>();
+        groupMap = new HashMap<>();
         initData();
     }
 
     private void initData(){
-        ProductGroup group1 = new ProductGroup(1L,"Group1");
-        ProductGroup group2 = new ProductGroup(2L,"Group2");
-        productGroupMap.put(group1.getName(),group1);
-        productGroupMap.put(group2.getName(),group2);
-        long counter = 1;
+        ProductGroup group0 = new ProductGroup(groupId++,"Group0");
+        ProductGroup group1 = new ProductGroup(groupId++,"Group1");
+        groupMap.put(group0.getName(),group0);
+        groupMap.put(group1.getName(),group1);
         for (int i = 0; i < 3; i++) {
-            Product product = createRandomProduct(counter++,group1);
-            addProductToStorageAndGroup(product,group1);
+            Product product = createRandomProduct(productId++,group0);
+            addProductToStorageAndGroup(product,group0);
         }
         for (int i = 0; i < 5; i++) {
-            Product product = createRandomProduct(counter++,group2);
-            addProductToStorageAndGroup(product,group2);
+            Product product = createRandomProduct(productId++,group1);
+            addProductToStorageAndGroup(product,group1);
         }
     }
 
@@ -58,28 +60,50 @@ public class Storage {
         group.getProducts().add(product);
     }
 
-    public int getProductQuantity(){
-        return 0;
+    public int getProductQuantity(String productName) throws Exception {
+        if(!productMap.containsKey(productName)) throw new Exception("No product with such name!");
+        return productMap.get(productName).getQuantity();
     }
 
-    public boolean decreaseProductQuantity(){
-        return false;
+    public void decreaseProductQuantity(String productName, int quantity) throws Exception {
+        if(!productMap.containsKey(productName)) throw new Exception("No product with such name!");
+        Product product = productMap.get(productName);
+        synchronized (product){
+            int currentQuantity = product.getQuantity();
+            if(quantity>currentQuantity) throw new Exception("Product quantity is not sufficient!");
+            product.setQuantity(currentQuantity-quantity);
+        }
     }
 
-    public boolean increaseProductQuantity(){
-        return false;
+    public void increaseProductQuantity(String productName, int quantity) throws Exception {
+        if(!productMap.containsKey(productName)) throw new Exception("No product with such name!");
+        Product product = productMap.get(productName);
+        synchronized (product){
+            product.setQuantity(product.getQuantity()+quantity);
+        }
     }
 
-    public boolean addProductGroup(){
-        return false;
+    public synchronized void addProductGroup(String groupName) throws Exception {
+        if(groupMap.containsKey(groupName)) throw new Exception("Group with such name already exists!");
+        ProductGroup group = new ProductGroup(groupId++,groupName);
+        groupMap.put(groupName,group);
     }
 
-    public boolean addProductToGroup(){
-        return false;
+    public synchronized void addProductToGroup(String productName, String groupName, int quantity, double price) throws Exception {
+        if(!groupMap.containsKey(groupName)) throw new Exception("No group with such name!");
+        if(productMap.containsKey(productName)) throw new Exception("Product with such name already exists!");
+        if(quantity<0) throw new Exception("Quantity of a product must not be less than zero!");
+        if(price<=0) throw new Exception("Price of a product must be greater than zero!");
+        ProductGroup group = groupMap.get(groupName);
+        Product product = new Product(productId++,productName,price,quantity,group);
+        addProductToStorageAndGroup(product,group);
     }
 
-    public boolean setProductPrice(){
-        return false;
+    public void setProductPrice(String productName, double price) throws Exception {
+        if(!productMap.containsKey(productName)) throw new Exception("No product with such name!");
+        if(price<=0) throw new Exception("Price of a product must be greater than 0!");
+        Product product = productMap.get(productName);
+        product.setPrice(price);
     }
 
     @Override
@@ -87,12 +111,12 @@ public class Storage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Storage storage = (Storage) o;
-        return Objects.equals(productMap, storage.productMap) && Objects.equals(productGroupMap, storage.productGroupMap);
+        return Objects.equals(productMap, storage.productMap) && Objects.equals(groupMap, storage.groupMap);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(productMap, productGroupMap);
+        return Objects.hash(productMap, groupMap);
     }
 
     @Override
@@ -103,7 +127,7 @@ public class Storage {
             sb.append("     ").append(product).append("\n");
         }
         sb.append("---------Product Groups---------\n");
-        for (ProductGroup group: productGroupMap.values()) {
+        for (ProductGroup group: groupMap.values()) {
             sb.append("     ").append(group).append("\n");
         }
         return sb.toString();

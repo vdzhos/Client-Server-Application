@@ -59,39 +59,45 @@ public class PacketUtils {
         int bUserId = new Random().nextInt(20);
 
         List<Command> commands = new LinkedList<>(Arrays.asList(Command.values()));
-        commands.remove(Command.RESPONSE_OK);
+//        commands.remove(Command.RESPONSE_OK);
+//        commands.remove(Command.RESPONSE_ERROR);
 
         Command command = commands.get(new Random().nextInt(commands.size()));
         JSONObject json = new JSONObject();
         Storage storage = Storage.getInstance();
         String name;
         int quantity;
+        double price;
         switch (command){
             case GET_PRODUCT_QUANTITY:
                 name = Utils.getRandomStringFromSet(storage.getProductMap().keySet());
-                json.put("productName",name);
+                json.put(Values.PRODUCT_NAME_COMMAND_PARAM,name);
                 break;
             case DECREASE_PRODUCT_QUANTITY: case INCREASE_PRODUCT_QUANTITY:
                 name = Utils.getRandomStringFromSet(storage.getProductMap().keySet());
-                json.put("productName",name);
+                json.put(Values.PRODUCT_NAME_COMMAND_PARAM,name);
                 quantity = new Random().nextInt(30)+1;
-                json.put("quantity",quantity);
+                json.put(Values.QUANTITY_COMMAND_PARAM,quantity);
                 break;
             case ADD_PRODUCT_GROUP:
                 name = "Group" + (new Random().nextInt(5)+1);
-                json.put("groupName",name);
+                json.put(Values.GROUP_NAME_COMMAND_PARAM,name);
                 break;
             case ADD_PRODUCT_TO_GROUP:
                 name = "Product" + (new Random().nextInt(30)+1);
-                json.put("productName",name);
-                name = Utils.getRandomStringFromSet(storage.getProductGroupMap().keySet());
-                json.put("groupName",name);
+                json.put(Values.PRODUCT_NAME_COMMAND_PARAM,name);
+                name = Utils.getRandomStringFromSet(storage.getGroupMap().keySet());
+                json.put(Values.GROUP_NAME_COMMAND_PARAM,name);
+                price = Utils.getRandomDouble(100,2);
+                json.put(Values.PRICE_COMMAND_PARAM,price);
+                quantity = new Random().nextInt(30)+1;
+                json.put(Values.QUANTITY_COMMAND_PARAM,quantity);
                 break;
             case SET_PRODUCT_PRICE:
                 name = Utils.getRandomStringFromSet(storage.getProductMap().keySet());
-                json.put("productName",name);
-                double price = Utils.getRandomDouble(100,2);
-                json.put("price",price);
+                json.put(Values.PRODUCT_NAME_COMMAND_PARAM,name);
+                price = Utils.getRandomDouble(100,2);
+                json.put(Values.PRICE_COMMAND_PARAM,price);
                 break;
         }
         byte[] messageBytes = json.toString().getBytes();
