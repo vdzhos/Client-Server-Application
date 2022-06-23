@@ -29,12 +29,12 @@ public class Storage {
     }
 
     private Storage() {
-        productMap = new HashMap<>();
-        groupMap = new HashMap<>();
         initData();
     }
 
-    private void initData(){
+    public void initData(){
+        productMap = new HashMap<>();
+        groupMap = new HashMap<>();
         ProductGroup group0 = new ProductGroup(groupId++,"Group0");
         ProductGroup group1 = new ProductGroup(groupId++,"Group1");
         groupMap.put(group0.getName(),group0);
@@ -132,4 +132,6 @@ public class Storage {
         }
         return sb.toString();
     }
+
+
 }

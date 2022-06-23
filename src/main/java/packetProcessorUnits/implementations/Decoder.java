@@ -119,4 +119,7 @@ public class Decoder {
         return cipher.doFinal(messageEncrypted);
     }
 
+    public void initializeExecutor() {
+        executor = Executors.newFixedThreadPool(Values.NUMBER_OF_THREADS);
+    }
 }

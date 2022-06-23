@@ -104,4 +104,8 @@ public class Processor {
 
         return message;
     }
+
+    public void initializeExecutor() {
+        executor = Executors.newFixedThreadPool(Values.NUMBER_OF_THREADS);
+    }
 }

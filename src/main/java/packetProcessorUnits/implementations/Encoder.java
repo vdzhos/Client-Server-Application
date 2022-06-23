@@ -111,4 +111,7 @@ public class Encoder {
         return cipher.doFinal(message);
     }
 
+    public void initializeExecutor() {
+        executor = Executors.newFixedThreadPool(Values.NUMBER_OF_THREADS);
+    }
 }

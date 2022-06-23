@@ -23,7 +23,7 @@ public class ReceiverImpl implements ReceiverInterface {
     private List<Packet> packets = null;
 
     private ExecutorService executor;
-    private final Thread packetReceiver;
+    private Thread packetReceiver;
 
     public static ReceiverImpl getInstance() {
         if (instance == null)
@@ -36,6 +36,9 @@ public class ReceiverImpl implements ReceiverInterface {
         this.decoder = Decoder.getInstance();
         this.processor = Processor.getInstance();
         executor = Executors.newFixedThreadPool(Values.NUMBER_OF_THREADS);
+    }
+
+    private void initializeReceivingThread() {
         packetReceiver = new Thread(() -> {
             receivePacket();
             try {
@@ -48,6 +51,11 @@ public class ReceiverImpl implements ReceiverInterface {
             }
         });
         packetReceiver.setDaemon(true);
+
+        executor = Executors.newFixedThreadPool(Values.NUMBER_OF_THREADS);
+        encoder.initializeExecutor();
+        decoder.initializeExecutor();
+        processor.initializeExecutor();
     }
 
     @Override
@@ -102,19 +110,18 @@ public class ReceiverImpl implements ReceiverInterface {
 
     @Override
     public void startReceiving() throws InterruptedException {
-        if(!started){
-            packetReceiver.start();
-            packetReceiver.join();
-        }
+        initializeReceivingThread();
+        packetReceiver.start();
+        packetReceiver.join();
+        started = true;
     }
 
     @Override
     public void startReceiving(List<Packet> packets) throws InterruptedException {
-        if(!started){
-            this.packets = packets;
-            packetReceiver.start();
-            packetReceiver.join();
-        }
+        initializeReceivingThread();
+        this.packets = packets;
+        packetReceiver.start();
+        packetReceiver.join();
     }
 
 }
