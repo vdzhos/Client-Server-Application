@@ -5,9 +5,12 @@ import java.util.Map;
 
 public enum Command {
 
-    CREATE(0),
-    UPDATE(1),
-    DELETE(2);
+    GET_PRODUCT_QUANTITY(0),
+    DECREASE_PRODUCT_QUANTITY(1),
+    INCREASE_PRODUCT_QUANTITY(2),
+    ADD_PRODUCT_GROUP(3),
+    ADD_PRODUCT_TO_GROUP(4),
+    SET_PRODUCT_PRICE(5);
 
     public final int code;
 

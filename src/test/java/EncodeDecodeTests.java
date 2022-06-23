@@ -3,6 +3,8 @@ import objects.Message;
 import objects.Packet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import packetProcessorUnits.Decoder;
+import packetProcessorUnits.Encoder;
 
 import java.util.Arrays;
 
@@ -12,12 +14,12 @@ public class EncodeDecodeTests {
     void testDecodeSuccess() {
         byte[] text = "Success message".getBytes();
 
-        Message message = new Message(Command.UPDATE,1, text);
+        Message message = new Message(Command.ADD_PRODUCT_GROUP,1, text);
         Packet initialPacket = new Packet((byte) 1,1L, message);
 
         try {
-            byte[] encodedPacket = PacketProcessor.encode(initialPacket);
-            Packet decodedPacket = PacketProcessor.decode(encodedPacket);
+            byte[] encodedPacket = Encoder.encode(initialPacket);
+            Packet decodedPacket = Decoder.decode(encodedPacket);
             System.out.println("Initial packet ------ \n" + initialPacket + "\n");
             System.out.println("Encoded packet : " + new String(encodedPacket) + "\n");
             System.out.println("Decoded packet ------ \n" + decodedPacket + "\n");
@@ -32,15 +34,15 @@ public class EncodeDecodeTests {
     void sameEncodingOfTwoSamePacketsSuccess(){
         byte[] text = "some text".getBytes();
 
-        Message message1 = new Message(Command.UPDATE,1, text);
+        Message message1 = new Message(Command.ADD_PRODUCT_GROUP,1, text);
         Packet packet1 = new Packet((byte) 1,1L, message1);
 
-        Message message2 = new Message(Command.UPDATE,1, text);
+        Message message2 = new Message(Command.ADD_PRODUCT_GROUP,1, text);
         Packet packet2 = new Packet((byte) 1,1L, message2);
 
         try {
-            byte[] encoded1 = PacketProcessor.encode(packet1);
-            byte[] encoded2 = PacketProcessor.encode(packet2);
+            byte[] encoded1 = Encoder.encode(packet1);
+            byte[] encoded2 = Encoder.encode(packet2);
             Assertions.assertTrue(Arrays.equals(encoded1,encoded2));
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,14 +54,14 @@ public class EncodeDecodeTests {
     void testDecodeHeaderChecksumFailure() {
         byte[] text = "header checksum failure".getBytes();
 
-        Message message = new Message(Command.UPDATE,1, text);
+        Message message = new Message(Command.ADD_PRODUCT_GROUP,1, text);
         Packet initialPacket = new Packet((byte) 1,1L, message);
 
         try {
-            byte[] encodedPacket = PacketProcessor.encode(initialPacket);
+            byte[] encodedPacket = Encoder.encode(initialPacket);
             encodedPacket[14] = 0x00;
             encodedPacket[15] = 0x00;
-            PacketProcessor.decode(encodedPacket);
+            Decoder.decode(encodedPacket);
             // incorrect crc
             Assertions.fail();
         } catch (Exception e) {
@@ -72,14 +74,14 @@ public class EncodeDecodeTests {
     void testDecodeMessageChecksumFailure() {
         byte[] text = "message checksum failure".getBytes();
 
-        Message message = new Message(Command.DELETE,5, text);
+        Message message = new Message(Command.DECREASE_PRODUCT_QUANTITY,5, text);
         Packet initialPacket = new Packet((byte) 5,5L, message);
 
         try {
-            byte[] encodedPacket = PacketProcessor.encode(initialPacket);
+            byte[] encodedPacket = Encoder.encode(initialPacket);
             encodedPacket[encodedPacket.length-2] = 0x00;
             encodedPacket[encodedPacket.length-1] = 0x00;
-            PacketProcessor.decode(encodedPacket);
+            Decoder.decode(encodedPacket);
             // incorrect crc
             Assertions.fail();
         } catch (Exception e) {
