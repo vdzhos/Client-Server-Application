@@ -26,11 +26,9 @@ public class SenderImpl implements SenderInterface {
             if(target.getProtocol()== Protocol.UDP){
                 sendByUDP(encodedResponse, target);
             }else {
-                sendByTCP(encodedResponse);
+                sendByTCP(encodedResponse, target);
             }
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+        }catch (IOException ignored){}
     }
 
     private void sendByUDP(byte[] encodedResponse, InetTarget target) throws IOException {
@@ -40,8 +38,8 @@ public class SenderImpl implements SenderInterface {
 
     }
 
-    private void sendByTCP(byte[] encodedResponse) {
-
+    private void sendByTCP(byte[] encodedResponse, InetTarget target) throws IOException {
+        target.getTcpSocket().getOutputStream().write(encodedResponse);
     }
 
 }

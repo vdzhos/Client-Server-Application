@@ -55,10 +55,6 @@ public class StoreServerUDP extends Thread implements ServerInterface {
                     decoder.submitDecodeTask(encodedPacket,inetTarget);
                 }
 
-//                if (received.equals("end")) {
-//                    running = false;
-//                    continue;
-//                }
             }catch (IOException e){
                 e.printStackTrace();
                 shutdown();

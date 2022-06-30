@@ -18,6 +18,7 @@ public class Values {
     public static final String RESPONSE_STATUS_ERROR = "Error";
 
     public static final int SERVER_PORT = 4445;
+    public static final String SERVER_IP = "127.0.0.1";
     public static final int SO_TIMEOUT = 5000;
     public static final int NUMBER_OF_SEND_TRIES = 5;
 
