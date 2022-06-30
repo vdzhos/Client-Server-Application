@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import packetProcessorUnits.implementations.SenderImpl;
 import servers.implementations.StoreServerUDP;
 
 import java.net.SocketException;
@@ -127,6 +128,38 @@ public class TestsUDP {
         Assertions.assertEquals(productQInit+2*quantity,productQCurrent);
         Assertions.assertTrue(storage.getGroupMap().containsKey(groupName));
         Assertions.assertEquals(price,productPCurrent);
+    }
+
+    @Test
+    void testUDPRepeatSendingOfPacket() throws InterruptedException {
+        String product1Name = "Product1";
+        Storage storage = Storage.getInstance();
+        int quantity = 50;
+        int productQInit = storage.getProductMap().get(product1Name).getQuantity();
+        Thread client1Thread = new Thread(() -> {
+            try {
+                StoreClientUDP client1 = new StoreClientUDP();
+                SenderImpl.setUnreachablePacket(true);
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(20000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    SenderImpl.setUnreachablePacket(false);
+                }).start();
+                Packet response = client1.sendCommandAndReceive(Command.INCREASE_PRODUCT_QUANTITY,product1Name,quantity);
+                System.out.println(response);
+                client1.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        client1Thread.setDaemon(true);
+        client1Thread.start();
+        client1Thread.join();
+        int productQCurrent = storage.getProductMap().get(product1Name).getQuantity();
+        Assertions.assertEquals(productQInit+quantity,productQCurrent);
     }
 
 }

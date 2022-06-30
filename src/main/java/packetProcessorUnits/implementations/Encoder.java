@@ -43,7 +43,7 @@ public class Encoder {
         executor.submit(() -> {
             try {
                 byte[] encodedResponse = encode(packet);
-                Decoder.getInstance().addResponseToHistory(packet.getBPktId(),encodedResponse);
+                Decoder.getInstance().addResponseToHistory(packet.getBPktId()-1,encodedResponse);
                 sender.send(encodedResponse, target);
             } catch (Exception e) {
                 e.printStackTrace();

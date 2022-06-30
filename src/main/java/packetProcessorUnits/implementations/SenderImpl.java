@@ -11,6 +11,7 @@ import java.net.DatagramPacket;
 public class SenderImpl implements SenderInterface {
 
     private static SenderImpl instance;
+    private static boolean unreachablePacket = false;
 
     public static SenderImpl getInstance() {
         if (instance == null)
@@ -23,6 +24,7 @@ public class SenderImpl implements SenderInterface {
     @Override
     public void send(byte[] encodedResponse, InetTarget target){
         try{
+            while (unreachablePacket){}
             if(target.getProtocol()== Protocol.UDP){
                 sendByUDP(encodedResponse, target);
             }else {
@@ -42,4 +44,11 @@ public class SenderImpl implements SenderInterface {
         target.getTcpSocket().getOutputStream().write(encodedResponse);
     }
 
+    public static boolean isUnreachablePacket() {
+        return unreachablePacket;
+    }
+
+    public static void setUnreachablePacket(boolean unreachablePacket) {
+        SenderImpl.unreachablePacket = unreachablePacket;
+    }
 }
