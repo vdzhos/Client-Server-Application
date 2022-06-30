@@ -8,6 +8,7 @@ import packetProcessorUnits.implementations.Decoder;
 import packetProcessorUnits.implementations.Encoder;
 import utils.Values;
 
+import java.io.IOException;
 import java.net.*;
 
 public class StoreClientUDP {
@@ -17,15 +18,14 @@ public class StoreClientUDP {
     private DatagramSocket socket;
     private InetAddress address;
     private byte bSrc;
-    private long bPktId;
 
     private byte[] buf;
 
     public StoreClientUDP() throws SocketException {
         socket = new DatagramSocket();
+        socket.setSoTimeout(Values.SO_TIMEOUT);
         bSrc = bSrcCounter;
         bSrcCounter += 1;
-        bPktId = 0;
         buf = new byte[Packet.PACKET_MAX_SIZE];
         try {
             address = InetAddress.getByName("localhost");
@@ -77,19 +77,33 @@ public class StoreClientUDP {
         } catch (ClassCastException | IndexOutOfBoundsException e) {
             throw new Exception("Incorrect arguments for command: " + command + "!");
         }
+
         byte[] messageBytes = json.toString().getBytes();
         Message message = new Message(command,bUserId,messageBytes);
-        Packet packetToEncode = new Packet(bSrc,bPktId,message);
-        bPktId += 2;
+        Packet packetToEncode = new Packet(bSrc,message);
         byte[] encodedPacket = Encoder.getInstance().encode(packetToEncode);
-//        System.out.println(encodedPacket.length);
+
         if(encodedPacket.length>Packet.PACKET_MAX_SIZE){
             throw new Exception("Packet is too large!");
         }
+
         DatagramPacket packet = new DatagramPacket(encodedPacket, encodedPacket.length, address, Values.SERVER_PORT);
-        socket.send(packet);
-        packet = new DatagramPacket(buf, buf.length);
-        socket.receive(packet);
+        DatagramPacket response = new DatagramPacket(buf, buf.length);
+        int counterOfSendTries = 0;
+        boolean received = false;
+        while(counterOfSendTries<Values.NUMBER_OF_SEND_TRIES){
+            try {
+                socket.send(packet);
+                socket.receive(response);
+                received = true;
+                break;
+            }catch (SocketTimeoutException e){
+                counterOfSendTries++;
+            }
+        }
+        if(!received){
+            throw new Exception("Server is unavailable! Number of send packet tries exceeded the maximum limit!");
+        }
         return Decoder.getInstance().decode(packet.getData());
     }
 

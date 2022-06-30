@@ -16,6 +16,8 @@ import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +29,8 @@ public class Decoder {
     private ExecutorService executor;
     private Processor processor;
 
+    private HashMap<Long,byte[]> history;
+
     public static Decoder getInstance() {
         if (instance == null)
             instance = new Decoder();
@@ -35,6 +39,7 @@ public class Decoder {
 
     private Decoder() {
         executor = Executors.newFixedThreadPool(Values.NUMBER_OF_THREADS);
+        history = new HashMap<>();
         processor = Processor.getInstance();
     }
 
@@ -42,11 +47,19 @@ public class Decoder {
         executor.submit(() -> {
             try {
                 Packet packet = decode(packetBytes);
-                processor.submitProcessTask(packet, target);
+                if(history.containsKey(packet.getBPktId())){
+                    SenderImpl.getInstance().send(history.get(packet.getBPktId()),target);
+                }else{
+                    processor.submitProcessTask(packet, target);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    public void addResponseToHistory(long bPktId, byte[] encodedResponse){
+        history.put(bPktId,encodedResponse);
     }
 
     public void shutdown() throws InterruptedException {

@@ -15,7 +15,7 @@ public class EncodeDecodeTests {
         byte[] text = "Success message".getBytes();
 
         Message message = new Message(Command.ADD_PRODUCT_GROUP,1, text);
-        Packet initialPacket = new Packet((byte) 1,1L, message);
+        Packet initialPacket = new Packet((byte) 1, message);
 
         try {
             byte[] encodedPacket = Encoder.getInstance().encode(initialPacket);
@@ -35,10 +35,10 @@ public class EncodeDecodeTests {
         byte[] text = "some text".getBytes();
 
         Message message1 = new Message(Command.ADD_PRODUCT_GROUP,1, text);
-        Packet packet1 = new Packet((byte) 1,1L, message1);
+        Packet packet1 = new Packet((byte) 1, message1);
 
         Message message2 = new Message(Command.ADD_PRODUCT_GROUP,1, text);
-        Packet packet2 = new Packet((byte) 1,1L, message2);
+        Packet packet2 = new Packet((byte) 1, message2);
 
         try {
             byte[] encoded1 = Encoder.getInstance().encode(packet1);
@@ -55,7 +55,7 @@ public class EncodeDecodeTests {
         byte[] text = "header checksum failure".getBytes();
 
         Message message = new Message(Command.ADD_PRODUCT_GROUP,1, text);
-        Packet initialPacket = new Packet((byte) 1,1L, message);
+        Packet initialPacket = new Packet((byte) 1, message);
 
         try {
             byte[] encodedPacket = Encoder.getInstance().encode(initialPacket);
@@ -75,7 +75,7 @@ public class EncodeDecodeTests {
         byte[] text = "message checksum failure".getBytes();
 
         Message message = new Message(Command.DECREASE_PRODUCT_QUANTITY,5, text);
-        Packet initialPacket = new Packet((byte) 5,5L, message);
+        Packet initialPacket = new Packet((byte) 5, message);
 
         try {
             byte[] encodedPacket = Encoder.getInstance().encode(initialPacket);

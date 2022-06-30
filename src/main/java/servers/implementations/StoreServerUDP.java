@@ -14,6 +14,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 
 public class StoreServerUDP extends Thread implements ServerInterface {
 
@@ -26,8 +27,6 @@ public class StoreServerUDP extends Thread implements ServerInterface {
     private Encoder encoder;
     private Decoder decoder;
     private Processor processor;
-
-    private int nextPacketMagicByteIndex = 0;
 
     public StoreServerUDP() throws SocketException {
         this.encoder = Encoder.getInstance();

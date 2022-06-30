@@ -46,7 +46,7 @@ public class MultiThreadingTests {
 
         byte[] messageBytes = jsonObject.toString().getBytes();
         Message message = new Message(Command.INCREASE_PRODUCT_QUANTITY, 1, messageBytes);
-        Packet packet = new Packet((byte) 1,1L, message);
+        Packet packet = new Packet((byte) 1, message);
 
         List<Packet> packetList = new ArrayList<>();
         packetList.add(packet);
@@ -77,17 +77,17 @@ public class MultiThreadingTests {
 
         byte[] messageBytes1 = jsonObject.toString().getBytes();
         Message message1 = new Message(Command.INCREASE_PRODUCT_QUANTITY, 1, messageBytes1);
-        Packet packet1 = new Packet((byte) 1,1L, message1);
+        Packet packet1 = new Packet((byte) 1, message1);
 
         jsonObject.put(Values.QUANTITY_COMMAND_PARAM, 5);
         byte[] messageBytes2 = jsonObject.toString().getBytes();
         Message message2 = new Message(Command.DECREASE_PRODUCT_QUANTITY, 1, messageBytes2);
-        Packet packet2 = new Packet((byte) 1,1L, message2);
+        Packet packet2 = new Packet((byte) 1, message2);
 
         jsonObject.put(Values.QUANTITY_COMMAND_PARAM, 7);
         byte[] messageBytes3 = jsonObject.toString().getBytes();
         Message message3 = new Message(Command.INCREASE_PRODUCT_QUANTITY, 1, messageBytes3);
-        Packet packet3 = new Packet((byte) 1,1L, message3);
+        Packet packet3 = new Packet((byte) 1, message3);
 
         List<Packet> packetList = new ArrayList<>();
         packetList.add(packet1);
@@ -114,7 +114,7 @@ public class MultiThreadingTests {
         jsonObject.put(Values.GROUP_NAME_COMMAND_PARAM, groupName);
         byte[] messageBytes = jsonObject.toString().getBytes();
         Message message = new Message(Command.ADD_PRODUCT_GROUP, 1, messageBytes);
-        Packet packet = new Packet((byte) 1,1L, message);
+        Packet packet = new Packet((byte) 1, message);
 
         List<Packet> packetList = new ArrayList<>();
         packetList.add(packet);

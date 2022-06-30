@@ -102,7 +102,7 @@ public class PacketUtils {
         }
         byte[] messageBytes = json.toString().getBytes();
         Message message = new Message(command,bUserId,messageBytes);
-        return new Packet(bSrc,bPktId,message);
+        return new Packet(bSrc,message);
     }
 
 }

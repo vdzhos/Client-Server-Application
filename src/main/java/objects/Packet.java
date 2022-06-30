@@ -7,6 +7,8 @@ public class Packet {
     public static final byte B_MAGIC = 0x13;
     public static final int PACKET_MAX_SIZE = 1024;
 
+    private static Long bPktIdCounter = 0L;
+
     private byte bSrc;
     private long bPktId;
     private int wLen;
@@ -29,6 +31,15 @@ public class Packet {
         public static final int W_2_CRC_16 = 2;
 
         public static final int ALL_EXCEPT_MESSAGE = HEADER_SIZE + W_CRC_16 + W_2_CRC_16;
+    }
+
+    public Packet(byte bSrc, Message bMsg) {
+        this.bSrc = bSrc;
+        synchronized (bPktIdCounter){
+            this.bPktId = bPktIdCounter;
+            bPktIdCounter += 2;
+        }
+        this.bMsg = bMsg;
     }
 
     public Packet(byte bSrc, long bPktId, Message bMsg) {
