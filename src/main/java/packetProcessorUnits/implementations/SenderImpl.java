@@ -1,12 +1,16 @@
 package packetProcessorUnits.implementations;
 
+import enums.Protocol;
+import objects.InetTarget;
 import objects.Packet;
 import packetProcessorUnits.interfaces.SenderInterface;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
 
 public class SenderImpl implements SenderInterface {
 
     private static SenderImpl instance;
-    private static Long countResponsesSent = 0L;
 
     public static SenderImpl getInstance() {
         if (instance == null)
@@ -17,21 +21,26 @@ public class SenderImpl implements SenderInterface {
     private SenderImpl() {}
 
     @Override
-    public  void send(byte[] encodedResponse) throws Exception {
-        synchronized (countResponsesSent) {
-            countResponsesSent++;
-            Packet decodedPacket = Decoder.getInstance().decode(encodedResponse);
-            System.out.println(decodedPacket);
-            System.out.println("--------------------------");
+    public void send(byte[] encodedResponse, InetTarget target){
+        try{
+            if(target.getProtocol()== Protocol.UDP){
+                sendByUDP(encodedResponse, target);
+            }else {
+                sendByTCP(encodedResponse);
+            }
+        }catch (IOException e){
+            e.printStackTrace();
         }
+    }
+
+    private void sendByUDP(byte[] encodedResponse, InetTarget target) throws IOException {
+        DatagramPacket packet = new DatagramPacket(encodedResponse, encodedResponse.length,
+                target.getAddress(), target.getPort());
+        target.getUdpSocket().send(packet);
+    }
+
+    private void sendByTCP(byte[] encodedResponse) {
 
     }
 
-    public static long getCountResponsesSent() {
-        return countResponsesSent;
-    }
-
-    public static void setCountResponsesSent(long countResponsesSent) {
-        SenderImpl.countResponsesSent = countResponsesSent;
-    }
 }

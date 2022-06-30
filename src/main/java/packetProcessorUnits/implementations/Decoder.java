@@ -1,6 +1,7 @@
 package packetProcessorUnits.implementations;
 
 import enums.Command;
+import objects.InetTarget;
 import objects.Message;
 import objects.Packet;
 import utils.CBCUtils;
@@ -37,11 +38,11 @@ public class Decoder {
         processor = Processor.getInstance();
     }
 
-    public void submitDecodeTask(byte[] packetBytes) {
+    public void submitDecodeTask(byte[] packetBytes, InetTarget target) {
         executor.submit(() -> {
             try {
                 Packet packet = decode(packetBytes);
-                processor.submitProcessTask(packet);
+                processor.submitProcessTask(packet, target);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -66,7 +67,7 @@ public class Decoder {
         long bPktId = wrapBytes.getLong();
         int wLen = wrapBytes.getInt();
 
-        byte[] header = new byte[Packet.BytesSize.HEADER_SIZE];
+        byte[] header = new byte[Packet.BytesConstants.HEADER_SIZE];
         System.arraycopy(bytes, 0, header, 0, header.length);
 
         short computedWCrc16 = PacketUtils.crc16(header);
@@ -75,11 +76,10 @@ public class Decoder {
             throw new Exception("Header checksum doesn't match.");
 
         byte[] messageBytes = new byte[wLen];
-        System.arraycopy(bytes, Packet.BytesSize.HEADER_SIZE + Packet.BytesSize.W_CRC_16, messageBytes, 0, wLen);
-
+        System.arraycopy(bytes, Packet.BytesConstants.HEADER_SIZE + Packet.BytesConstants.W_CRC_16, messageBytes, 0, wLen);
 
         short computedW2Crc16 = PacketUtils.crc16(messageBytes);
-        short decodedW2Crc16 = wrapBytes.getShort(bytes.length - Packet.BytesSize.W_2_CRC_16);
+        short decodedW2Crc16 = wrapBytes.getShort(Packet.BytesConstants.HEADER_SIZE + Packet.BytesConstants.W_CRC_16 + wLen);
         if(computedW2Crc16 != decodedW2Crc16)
             throw new Exception("Message checksum doesn't match.");
 

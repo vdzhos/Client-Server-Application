@@ -2,6 +2,7 @@ package packetProcessorUnits.implementations;
 
 import enums.Command;
 import model.Storage;
+import objects.InetTarget;
 import objects.Message;
 import objects.Packet;
 import org.json.JSONObject;
@@ -32,13 +33,13 @@ public class Processor {
         encoder = Encoder.getInstance();
     }
 
-    public void submitProcessTask(Packet packet) {
+    public void submitProcessTask(Packet packet, InetTarget target) {
         executor.submit(() -> {
             Message responseMessage = executeCommand(packet.getBMsg());
             packet.setBSrc(Values.B_SRC);
             packet.setBPktId(packet.getBPktId()+1);
             packet.setBMsg(responseMessage);
-            encoder.submitEncodeTask(packet);
+            encoder.submitEncodeTask(packet, target);
         });
     }
 

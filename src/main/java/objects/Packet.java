@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Packet {
 
     public static final byte B_MAGIC = 0x13;
+    public static final int PACKET_MAX_SIZE = 1024;
 
     private byte bSrc;
     private long bPktId;
@@ -13,7 +14,7 @@ public class Packet {
     private Message bMsg;
     private short w2Crc16;
 
-    public static class BytesSize{
+    public static class BytesConstants {
 
         public static final int B_MAGIC = 1;
         public static final int B_SRC = 1;
@@ -22,8 +23,12 @@ public class Packet {
 
         public static final int HEADER_SIZE = B_MAGIC + B_SRC + B_PKT_ID + W_LEN;
 
+        public static final int W_LEN_OFFSET = HEADER_SIZE - W_LEN;
+
         public static final int W_CRC_16 = 2;
         public static final int W_2_CRC_16 = 2;
+
+        public static final int ALL_EXCEPT_MESSAGE = HEADER_SIZE + W_CRC_16 + W_2_CRC_16;
     }
 
     public Packet(byte bSrc, long bPktId, Message bMsg) {

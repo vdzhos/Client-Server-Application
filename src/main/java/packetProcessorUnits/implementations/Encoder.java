@@ -1,5 +1,6 @@
 package packetProcessorUnits.implementations;
 
+import objects.InetTarget;
 import objects.Message;
 import objects.Packet;
 import packetProcessorUnits.interfaces.SenderInterface;
@@ -38,11 +39,11 @@ public class Encoder {
         sender = SenderImpl.getInstance();
     }
 
-    public void submitEncodeTask(Packet packet) {
+    public void submitEncodeTask(Packet packet, InetTarget target) {
         executor.submit(() -> {
             try {
                 byte[] encodedResponse = encode(packet);
-                sender.send(encodedResponse);
+                sender.send(encodedResponse, target);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -60,7 +61,7 @@ public class Encoder {
         byte[] bPktId = ByteBuffer.allocate(Long.BYTES).putLong(packet.getBPktId()).order(ByteOrder.BIG_ENDIAN).array();
         byte[] wLen = ByteBuffer.allocate(Integer.BYTES).putInt(messageBytes.length).order(ByteOrder.BIG_ENDIAN).array();
 
-        byte[] header = ByteBuffer.allocate(Packet.BytesSize.HEADER_SIZE)
+        byte[] header = ByteBuffer.allocate(Packet.BytesConstants.HEADER_SIZE)
                 .put(Packet.B_MAGIC)
                 .put(packet.getBSrc())
                 .put(bPktId)
@@ -74,8 +75,8 @@ public class Encoder {
 
         //        System.out.println(Thread.currentThread());
 
-        return ByteBuffer.allocate(Packet.BytesSize.HEADER_SIZE + Packet.BytesSize.W_CRC_16 +
-                messageBytes.length + Packet.BytesSize.W_2_CRC_16)
+        return ByteBuffer.allocate(Packet.BytesConstants.HEADER_SIZE + Packet.BytesConstants.W_CRC_16 +
+                messageBytes.length + Packet.BytesConstants.W_2_CRC_16)
                 .put(header)
                 .put(wCrc16)
                 .put(messageBytes)

@@ -19,6 +19,7 @@ public class ReceiverImpl implements ReceiverInterface {
     private Decoder decoder;
     private Processor processor;
 
+
     private boolean started = false;
     private List<Packet> packets = null;
 
@@ -39,7 +40,7 @@ public class ReceiverImpl implements ReceiverInterface {
     }
 
     private void initializeAllExecutors() {
-        SenderImpl.setCountResponsesSent(0);
+//        SenderImpl.setCountResponsesSent(0);
         this.packets = null;
         packetReceiver = new Thread(() -> {
             receivePacket();
@@ -82,7 +83,7 @@ public class ReceiverImpl implements ReceiverInterface {
                 try {
                     Packet packet = PacketUtils.generatePacket(finalI);
                     byte[] encodedPacket = encoder.encode(packet);
-                    decoder.submitDecodeTask(encodedPacket);
+//                    decoder.submitDecodeTask(encodedPacket);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -99,7 +100,7 @@ public class ReceiverImpl implements ReceiverInterface {
             runnables.add(() -> {
                 try {
                     byte[] encodedPacket = encoder.encode(packet);
-                    decoder.submitDecodeTask(encodedPacket);
+//                    decoder.submitDecodeTask(encodedPacket);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

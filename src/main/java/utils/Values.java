@@ -16,5 +16,6 @@ public class Values {
     public static final String RESPONSE_STATUS_COMMAND_PARAM = "responseStatus";
     public static final String RESPONSE_STATUS_OK = "Ok";
     public static final String RESPONSE_STATUS_ERROR = "Error";
+    public static final int SERVER_PORT = 4445;
 
 }
