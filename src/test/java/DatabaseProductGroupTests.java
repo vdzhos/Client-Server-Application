@@ -1,8 +1,5 @@
 import database.DataBase;
-import database.ProductCriteriaQuery;
-import database.ProductCriteriaQueryBuilder;
 import database.Queries;
-import model.Product;
 import model.ProductGroup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,24 +7,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import repositories.implementations.GroupRepository;
 import repositories.implementations.ProductRepository;
+import services.implementations.GroupService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseProductGroupTests {
 
     private static ProductRepository productRepository;
-    private static GroupRepository groupRepository;
+    private static GroupService groupService;
 
     private static DataBase db;
 
     @BeforeAll
     static void beforeAll(){
         productRepository = new ProductRepository();
-        groupRepository = new GroupRepository();
+        groupService = new GroupService();
         db = DataBase.getInstance();
     }
 
@@ -67,7 +63,7 @@ public class DatabaseProductGroupTests {
         String name = "group3";
         ProductGroup pg = new ProductGroup(null,name);
         try {
-            ProductGroup group = groupRepository.create(pg);
+            ProductGroup group = groupService.addGroup(pg);
             Assertions.assertEquals(group.getName(),name);
             Assertions.assertNotEquals(null,group.getId());
         } catch (Exception e) {
@@ -81,7 +77,7 @@ public class DatabaseProductGroupTests {
         String name = "group2";
         ProductGroup pg = new ProductGroup(null,name);
         try {
-            ProductGroup group = groupRepository.create(pg);
+            ProductGroup group = groupService.addGroup(pg);
             Assertions.fail();
         } catch (Exception e) {
             Assertions.assertTrue(true);
@@ -98,7 +94,7 @@ public class DatabaseProductGroupTests {
                 id1 = gr1.getLong("id");
             }
             try {
-                ProductGroup group = groupRepository.read(id1);
+                ProductGroup group = groupService.getGroup(id1);
                 Assertions.assertEquals(id1,group.getId());
                 Assertions.assertEquals(name,group.getName());
             } catch (Exception e) {
@@ -112,7 +108,7 @@ public class DatabaseProductGroupTests {
     @Test
     void testReadGroupFailure(){
         try {
-            ProductGroup group = groupRepository.read(-1L);
+            ProductGroup group = groupService.getGroup(-1L);
             Assertions.fail();
         } catch (Exception e) {
             Assertions.assertTrue(true);
@@ -130,7 +126,7 @@ public class DatabaseProductGroupTests {
             }
             try {
                 ProductGroup group = new ProductGroup(id1,"123123123");
-                ProductGroup updated = groupRepository.update(group);
+                ProductGroup updated = groupService.updateGroup(group);
                 Assertions.assertEquals(group,updated);
             } catch (Exception e) {
                 Assertions.fail();
@@ -144,7 +140,7 @@ public class DatabaseProductGroupTests {
     void testUpdateGroupFailure(){
         try {
             ProductGroup group = new ProductGroup(-1L,"123123123");
-            ProductGroup updated = groupRepository.update(group);
+            ProductGroup updated = groupService.updateGroup(group);
             Assertions.fail();
         } catch (Exception e) {
             Assertions.assertTrue(true);
@@ -161,7 +157,7 @@ public class DatabaseProductGroupTests {
                 id1 = gr1.getLong("id");
             }
             try {
-                groupRepository.delete(id1);
+                groupService.deleteGroup(id1);
                 try (ResultSet groupSize = st.executeQuery("SELECT COUNT(*) FROM product_group")) {
                     groupSize.next();
                     long size = groupSize.getLong(1);
@@ -179,7 +175,7 @@ public class DatabaseProductGroupTests {
     void testDeleteGroupFailedNoSuchGroup() {
         try (Statement st = db.createStatement()) {
             st.execute(Queries.DELETE_ALL_FROM_PRODUCT);
-            groupRepository.delete(-1L);
+            groupService.deleteGroup(-1L);
             try (ResultSet groupSize = st.executeQuery("SELECT COUNT(*) FROM product_group")) {
                 groupSize.next();
                 long size = groupSize.getLong(1);
@@ -201,7 +197,7 @@ public class DatabaseProductGroupTests {
             }
             try {
                 st.execute(Queries.DELETE_ALL_FROM_PRODUCT);
-                groupRepository.delete(id1);
+                groupService.deleteGroup(id1);
                 try (ResultSet groupSize = st.executeQuery("SELECT COUNT(*) FROM product_group")) {
                     groupSize.next();
                     long size = groupSize.getLong(1);

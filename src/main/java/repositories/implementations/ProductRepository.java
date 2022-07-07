@@ -166,7 +166,10 @@ public class ProductRepository implements ProductRepositoryInterface {
             if (updatedRows != 1)
                 throw new Exception("Cannot decrease product quantity.");
 
-            return getQuantity(id);
+            int newQuantity = getQuantity(id);
+            if(newQuantity<0) throw new Exception("Resulting quantity cannot be negative!");
+
+            return newQuantity;
         } catch (SQLException e) {
             e.printStackTrace();
             dataBase.rollback();
