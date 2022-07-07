@@ -3,13 +3,11 @@ import database.ProductCriteriaQuery;
 import database.ProductCriteriaQueryBuilder;
 import database.Queries;
 import model.Product;
-import model.ProductGroup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import repositories.implementations.GroupRepository;
-import repositories.implementations.ProductRepository;
+import services.implementations.ProductService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,15 +17,13 @@ import java.util.List;
 
 public class DatabaseProductTests {
 
-    private static ProductRepository productRepository;
-    private static GroupRepository groupRepository;
+    private static ProductService productService;
 
     private static DataBase db;
 
     @BeforeAll
     static void beforeAll() {
-        productRepository = new ProductRepository();
-        groupRepository = new GroupRepository();
+        productService = new ProductService();
         db = DataBase.getInstance();
     }
 
@@ -84,7 +80,7 @@ public class DatabaseProductTests {
                     .setUpperPrice(400.00)
                     .build();
             System.out.println(params.getQuery());
-            List<Product> result = productRepository.listByCriteria(params);
+            List<Product> result = productService.listProductsByCriteria(params);
             Assertions.assertEquals(2, result.size());
         } catch (Exception e) {
             Assertions.fail();
@@ -98,7 +94,7 @@ public class DatabaseProductTests {
         System.out.println(params.getQuery());
         List<Product> result = null;
         try {
-            result = productRepository.listByCriteria(params);
+            result = productService.listProductsByCriteria(params);
         } catch (Exception e) {
             Assertions.fail();
         }
@@ -140,7 +136,7 @@ public class DatabaseProductTests {
         Product pr = createProductWithName(name);
 
         try {
-            Product product = productRepository.create(pr);
+            Product product = productService.addProduct(pr);
             Assertions.assertEquals(product.getName(), name);
             Assertions.assertNotEquals(null, product.getId());
         } catch (Exception e) {
@@ -155,7 +151,7 @@ public class DatabaseProductTests {
         Product pr = createProductWithName(name);
 
         try {
-            productRepository.create(pr);
+            productService.addProduct(pr);
             Assertions.fail();
         } catch (Exception e) {
             Assertions.assertTrue(true);
@@ -168,7 +164,7 @@ public class DatabaseProductTests {
         Long id = getProductIdByName(name);
 
         try {
-            Product product = productRepository.read(id);
+            Product product = productService.getProduct(id);
             Assertions.assertEquals(id, product.getId());
             Assertions.assertEquals(name, product.getName());
         } catch (Exception e) {
@@ -179,7 +175,7 @@ public class DatabaseProductTests {
     @Test
     void testReadProductFailure() {
         try {
-            productRepository.read(-1L);
+            productService.getProduct(-1L);
             Assertions.fail();
         } catch (Exception e) {
             Assertions.assertTrue(true);
@@ -191,9 +187,9 @@ public class DatabaseProductTests {
         String name = "product1";
         Long id = getProductIdByName(name);
         try {
-            Product product = productRepository.read(id);
+            Product product = productService.getProduct(id);
             product.setName("asfgdsdfhhjhg");
-            Product updated = productRepository.update(product);
+            Product updated = productService.updateProduct(product);
             Assertions.assertEquals(product, updated);
         } catch (Exception e) {
             Assertions.fail();
@@ -205,10 +201,10 @@ public class DatabaseProductTests {
         String name = "product1";
         Long id = getProductIdByName(name);
         try {
-            Product product = productRepository.read(id);
+            Product product = productService.getProduct(id);
             product.setId(-1L);
             product.setName("asfgdsdfhhjhg");
-            productRepository.update(product);
+            productService.updateProduct(product);
         } catch (Exception e) {
             Assertions.assertTrue(true);
         }
@@ -220,14 +216,14 @@ public class DatabaseProductTests {
         Long id = getProductIdByName(name);
 
         try {
-            productRepository.delete(id);
+            productService.deleteProduct(id);
         } catch (Exception e) {
             e.printStackTrace();
             Assertions.fail();
         }
 
         try {
-            productRepository.read(id);
+            productService.getProduct(id);
             Assertions.fail();
         } catch (Exception e) {
             Assertions.assertTrue(true);
@@ -237,7 +233,7 @@ public class DatabaseProductTests {
     @Test
     void testDeleteProductFailure() {
         try {
-            productRepository.delete(-1L);
+            productService.deleteProduct(-1L);
             Assertions.fail();
         } catch (Exception e) {
             Assertions.assertTrue(true);

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import repositories.implementations.GroupRepository;
 import repositories.implementations.ProductRepository;
 import services.implementations.GroupService;
 
@@ -15,14 +14,12 @@ import java.sql.Statement;
 
 public class DatabaseProductGroupTests {
 
-    private static ProductRepository productRepository;
     private static GroupService groupService;
 
     private static DataBase db;
 
     @BeforeAll
     static void beforeAll(){
-        productRepository = new ProductRepository();
         groupService = new GroupService();
         db = DataBase.getInstance();
     }
