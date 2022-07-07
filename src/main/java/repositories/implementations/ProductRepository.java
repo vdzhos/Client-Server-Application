@@ -1,7 +1,14 @@
 package repositories.implementations;
 
 import database.DataBase;
+import database.Queries;
+import model.Product;
 import repositories.interfaces.ProductRepositoryInterface;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class ProductRepository implements ProductRepositoryInterface {
 
@@ -12,5 +19,166 @@ public class ProductRepository implements ProductRepositoryInterface {
     }
 
 
+    @Override
+    public Product create(Product product) throws Exception {
+        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CREATE_PRODUCT, Statement.RETURN_GENERATED_KEYS)) {
+
+            preparedStatement.setString(1, product.getName());
+            preparedStatement.setDouble(2, product.getPrice());
+            preparedStatement.setInt(3, product.getQuantity());
+            preparedStatement.setLong(4, product.getGroupId());
+
+            int insertedRows = preparedStatement.executeUpdate();
+            if (insertedRows != 1)
+                throw new Exception("Creating product failed.");
+
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next())
+                    product.setId(generatedKeys.getLong(1));
+                else
+                    throw new Exception("Creating product failed.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Creating product failed.");
+        }
+
+        return product;
+    }
+
+    @Override
+    public Product read(Long id) throws Exception {
+        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.READ_PRODUCT)) {
+
+            preparedStatement.setLong(1, id);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    Long resId = resultSet.getLong("id");
+                    String name = resultSet.getString("name");
+                    Double price = resultSet.getDouble("price");
+                    Integer quantity = resultSet.getInt("quantity");
+                    Long groupId = resultSet.getLong("groupId");
+                    return new Product(resId, name, price, quantity, groupId);
+                } else
+                    throw new Exception("Creating product failed.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Creating product failed.");
+        }
+    }
+
+    @Override
+    public Product update(Product product) throws Exception {
+        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.UPDATE_PRODUCT)) {
+
+            preparedStatement.setString(1, product.getName());
+            preparedStatement.setDouble(2, product.getPrice());
+            preparedStatement.setInt(3, product.getQuantity());
+            preparedStatement.setLong(4, product.getGroupId());
+            preparedStatement.setLong(5, product.getId());
+
+            int updatedRows = preparedStatement.executeUpdate();
+            if (updatedRows != 1)
+                throw new Exception("Updating product failed.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Updating product failed.");
+        }
+
+        return product;
+    }
+
+    @Override
+    public void delete(Long id) throws Exception {
+        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.DELETE_PRODUCT)) {
+
+            preparedStatement.setLong(1, id);
+
+            int deletedRows = preparedStatement.executeUpdate();
+            if (deletedRows != 1)
+                throw new Exception("Deleting product failed.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Deleting product failed.");
+        }
+    }
+
+    @Override
+    public int getQuantity(Long id) throws Exception {
+        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.DELETE_PRODUCT)) {
+
+            preparedStatement.setLong(1, id);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next())
+                    return resultSet.getInt(1);
+                else
+                    throw new Exception("Cannot get product quantity.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Cannot get product quantity.");
+        }
+    }
+
+    @Override
+    public int decreaseQuantity(Long id, int quantity) throws Exception {
+        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CHANGE_PRODUCT_QUANTITY)) {
+
+            preparedStatement.setInt(1, -quantity);
+            preparedStatement.setLong(2, id);
+
+            int updatedRows = preparedStatement.executeUpdate();
+            if (updatedRows != 1)
+                throw new Exception("Cannot decrease product quantity.");
+
+            return getQuantity(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Cannot decrease product quantity.");
+        }
+    }
+
+    @Override
+    public int increaseQuantity(Long id, int quantity) throws Exception {
+        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CHANGE_PRODUCT_QUANTITY)) {
+
+            preparedStatement.setInt(1, quantity);
+            preparedStatement.setLong(2, id);
+
+            int updatedRows = preparedStatement.executeUpdate();
+            if (updatedRows != 1)
+                throw new Exception("Cannot increase product quantity.");
+
+            return getQuantity(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Cannot increase product quantity.");
+        }
+    }
+
+    @Override
+    public double updatePrice(Long id, double price) throws Exception {
+        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.SET_PRODUCT_PRICE)) {
+
+            preparedStatement.setDouble(1, price);
+            preparedStatement.setLong(2, id);
+
+            int updatedRows = preparedStatement.executeUpdate();
+            if (updatedRows != 1)
+                throw new Exception("Cannot set product price.");
+
+            return read(id).getPrice();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Cannot set product price.");
+        }
+    }
 
 }
