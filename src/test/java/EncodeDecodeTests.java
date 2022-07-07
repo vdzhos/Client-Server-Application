@@ -39,6 +39,8 @@ public class EncodeDecodeTests {
 
         Message message2 = new Message(Command.ADD_PRODUCT_GROUP,1, text);
         Packet packet2 = new Packet((byte) 1, message2);
+        packet2.setBPktId(packet1.getBPktId());
+
 
         try {
             byte[] encoded1 = Encoder.getInstance().encode(packet1);

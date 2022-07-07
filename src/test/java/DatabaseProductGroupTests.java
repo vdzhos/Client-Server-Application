@@ -17,7 +17,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataBaseTests {
+public class DatabaseProductGroupTests {
 
     private static ProductRepository productRepository;
     private static GroupRepository groupRepository;
@@ -60,49 +60,6 @@ public class DataBaseTests {
                 "VALUES ('product6',500.50,12,"+id2+")");
 
         st.close();
-    }
-
-    @Test
-    void testListByCriteriaWithParams() {
-        try (Statement st = db.createStatement()){
-            long id1;
-            try (ResultSet gr1 = st.executeQuery("SELECT id FROM product_group WHERE name = 'group1'")) {
-                gr1.next();
-                id1 = gr1.getLong("id");
-            }
-            long id2;
-            try (ResultSet gr2 = st.executeQuery("SELECT id FROM product_group WHERE name = 'group2'")) {
-                gr2.next();
-                id2 = gr2.getLong("id");
-            }
-            List<Long> groupIds = new ArrayList<>();
-            groupIds.add(id1);
-            groupIds.add(id2);
-            ProductCriteriaQuery params = new ProductCriteriaQueryBuilder()
-                    .setTextInName("product")
-                    .setGroupIds(groupIds)
-                    .setUpperPrice(400.00)
-                    .build();
-            System.out.println(params.getQuery());
-            List<Product> result = productRepository.listByCriteria(params);
-            Assertions.assertEquals(2,result.size());
-        } catch (Exception e) {
-            Assertions.fail();
-        }
-    }
-
-    @Test
-    void testListByCriteriaWithoutParams(){
-        ProductCriteriaQuery params = new ProductCriteriaQueryBuilder()
-                .build();
-        System.out.println(params.getQuery());
-        List<Product> result = null;
-        try {
-            result = productRepository.listByCriteria(params);
-        } catch (Exception e) {
-            Assertions.fail();
-        }
-        Assertions.assertEquals(6,result.size());
     }
 
     @Test
