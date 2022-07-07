@@ -67,7 +67,6 @@ public class ProductRepository implements ProductRepositoryInterface {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new Exception("Creating product failed.");
         }
 
