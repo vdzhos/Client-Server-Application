@@ -1,14 +1,18 @@
 package repositories.implementations;
 
 import database.DataBase;
-import database.Queries;
+import database.ProductCriteriaQuery;
 import model.Product;
+import database.Queries;
 import repositories.interfaces.ProductRepositoryInterface;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import java.sql.PreparedStatement;
 
 public class ProductRepository implements ProductRepositoryInterface {
 
@@ -18,6 +22,30 @@ public class ProductRepository implements ProductRepositoryInterface {
         dataBase = DataBase.getInstance();
     }
 
+    @Override
+    public List<Product> listByCriteria(ProductCriteriaQuery criteria) {
+        try {
+            Statement statement = dataBase.createStatement();
+            String query = criteria.getQuery();
+            ResultSet result = statement.executeQuery(query);
+            int size = result.getFetchSize();
+            List<Product> list = new ArrayList<>(size);
+            while(result.next()){
+                long id = result.getLong("id");
+                String name = result.getString("name");
+                double price = result.getDouble("price");
+                int quantity = result.getInt("quantity");
+                long groupId = result.getLong("groupId");
+                list.add(new Product(id,name,price,quantity,groupId));
+            }
+            result.close();
+            statement.close();
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     @Override
     public Product create(Product product) throws Exception {

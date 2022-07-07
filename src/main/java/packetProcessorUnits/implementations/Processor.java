@@ -65,34 +65,34 @@ public class Processor {
                 case GET_PRODUCT_QUANTITY:
                     productName = (String) json.get(Values.PRODUCT_NAME_COMMAND_PARAM);
                     int result;
-                    result = storage.getProductQuantity(productName);
-                    jsonResponse.put(Values.QUANTITY_COMMAND_PARAM,result);
+//                    result = storage.getProductQuantity(productName);
+//                    jsonResponse.put(Values.QUANTITY_COMMAND_PARAM,result);
                     break;
                 case DECREASE_PRODUCT_QUANTITY:
                     productName = (String) json.get(Values.PRODUCT_NAME_COMMAND_PARAM);
                     quantity = (int) json.get(Values.QUANTITY_COMMAND_PARAM);
-                    storage.decreaseProductQuantity(productName,quantity);
+//                    storage.decreaseProductQuantity(productName,quantity);
                     break;
                 case INCREASE_PRODUCT_QUANTITY:
                     productName = (String) json.get(Values.PRODUCT_NAME_COMMAND_PARAM);
                     quantity = (int) json.get(Values.QUANTITY_COMMAND_PARAM);
-                    storage.increaseProductQuantity(productName,quantity);
+//                    storage.increaseProductQuantity(productName,quantity);
                     break;
                 case ADD_PRODUCT_GROUP:
                     groupName = (String) json.get(Values.GROUP_NAME_COMMAND_PARAM);
-                    storage.addProductGroup(groupName);
+//                    storage.addProductGroup(groupName);
                     break;
                 case ADD_PRODUCT_TO_GROUP:
                     productName = (String) json.get(Values.PRODUCT_NAME_COMMAND_PARAM);
                     groupName = (String) json.get(Values.GROUP_NAME_COMMAND_PARAM);
                     quantity = (int) json.get(Values.QUANTITY_COMMAND_PARAM);
                     price = ((BigDecimal) json.get(Values.PRICE_COMMAND_PARAM)).doubleValue();
-                    storage.addProductToGroup(productName,groupName,quantity,price);
+//                    storage.addProductToGroup(productName,groupName,quantity,price);
                     break;
                 case SET_PRODUCT_PRICE:
                     productName = (String) json.get(Values.PRODUCT_NAME_COMMAND_PARAM);
                     price = ((BigDecimal) json.get(Values.PRICE_COMMAND_PARAM)).doubleValue();
-                    storage.setProductPrice(productName,price);
+//                    storage.setProductPrice(productName,price);
                     break;
             }
             jsonResponse.put(Values.RESPONSE_STATUS_COMMAND_PARAM,Values.RESPONSE_STATUS_OK);

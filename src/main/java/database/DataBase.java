@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class DataBase {
 
-    public static DataBase database;
+    private static DataBase database;
     private static final String dbName = "Storage";
 
     private Connection conn;
@@ -35,9 +35,6 @@ public class DataBase {
         st.execute(Queries.ENABLE_FOREIGN_KEY);
         st.execute(Queries.CREATE_TABLE_GROUP);
         st.execute(Queries.CREATE_TABLE_PRODUCT);
-//        st.execute("INSERT INTO product_group (name) VALUES ('123123')");
-//        ResultSet res = st.executeQuery("SELECT * FROM product_group;");
-//        System.out.println(res.next());
         st.close();
     }
 

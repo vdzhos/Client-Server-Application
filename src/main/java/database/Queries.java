@@ -35,4 +35,16 @@ public class Queries {
     public static final String SET_PRODUCT_PRICE = "update product set price = ? where id = ?";
 
 
+    public static final String DELETE_ALL_FROM_PRODUCT = "delete from product";
+
+    public static final String DELETE_ALL_FROM_GROUP = "delete from product_group";
+
+    public static final String CREATE_GROUP = "insert into product_group (name) values (?);";
+
+    public static final String READ_GROUP = "select * from product_group where id = ?;";
+
+    public static final String UPDATE_GROUP = "update product_group set name = ? where id = ?;";
+
+    public static final String DELETE_GROUP = "delete from product_group where id = ?;";
+
 }

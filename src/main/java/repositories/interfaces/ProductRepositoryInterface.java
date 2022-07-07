@@ -1,8 +1,8 @@
 package repositories.interfaces;
 
+import database.ProductCriteriaQuery;
 import model.Product;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface ProductRepositoryInterface {
@@ -17,6 +17,7 @@ public interface ProductRepositoryInterface {
     int increaseQuantity(Long id, int quantity) throws Exception;
     double updatePrice(Long id, double price) throws Exception;
 
-//    List<Product> listByCriteria(Long groupId, );
+    List<Product> listByCriteria(ProductCriteriaQuery criteria);
+
 
 }

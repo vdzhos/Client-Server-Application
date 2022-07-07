@@ -4,9 +4,9 @@ import model.ProductGroup;
 
 public interface GroupRepositoryInterface {
 
-//    boolean create(ProductGroup group);
-//    ProductGroup read(Long id);
-//    boolean update(ProductGroup group);
-//    boolean delete(Long id);
+    ProductGroup create(ProductGroup group) throws Exception;
+    ProductGroup read(Long id) throws Exception;
+    ProductGroup update(ProductGroup group) throws Exception;
+    void delete(Long id) throws Exception;
 
 }

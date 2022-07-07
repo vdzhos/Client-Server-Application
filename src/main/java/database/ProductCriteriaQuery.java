@@ -19,6 +19,8 @@ public class ProductCriteriaQuery {
     private Double lowerPrice;
     private Double upperPrice;
 
+    ProductCriteriaQuery(){}
+
     public String getQuery(){
         StringBuilder sb = new StringBuilder();
         sb.append("select * from product");
@@ -29,14 +31,14 @@ public class ProductCriteriaQuery {
             for (Long id: groupIds){
                 sb.append(id).append(',');
             }
-            sb.deleteCharAt(sb.length()-1).append(") ");
+            sb.deleteCharAt(sb.length()-1).append(")");
             firstCondition = false;
         }
         if(textInName!=null) {
             firstCondition(sb,firstCondition);
-            sb.append("name like %")
+            sb.append("name like '%")
                     .append(textInName)
-                    .append("% ");
+                    .append("%'");
             firstCondition = false;
         }
         if(lowerQuantity!=null) {
@@ -59,12 +61,12 @@ public class ProductCriteriaQuery {
             sb.append("price <= ").append(upperPrice);
             firstCondition = false;
         }
-        return sb.toString();
+        return sb.append(';').toString();
     }
 
     private void firstCondition(StringBuilder sb, boolean firstCondition){
-        if(firstCondition) sb.append(" and ");
-        else sb.append(" where ");
+        if(firstCondition) sb.append(" where ");
+        else sb.append(" and ");
     }
 
 }
