@@ -17,7 +17,7 @@ public interface ProductRepositoryInterface {
     int increaseQuantity(Long id, int quantity) throws Exception;
     double updatePrice(Long id, double price) throws Exception;
 
-    List<Product> listByCriteria(ProductCriteriaQuery criteria);
+    List<Product> listByCriteria(ProductCriteriaQuery criteria) throws Exception;
 
 
 }

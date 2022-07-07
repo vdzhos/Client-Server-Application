@@ -86,7 +86,7 @@ public class DataBaseTests {
             System.out.println(params.getQuery());
             List<Product> result = productRepository.listByCriteria(params);
             Assertions.assertEquals(2,result.size());
-        } catch (SQLException e) {
+        } catch (Exception e) {
             Assertions.fail();
         }
     }
@@ -96,7 +96,12 @@ public class DataBaseTests {
         ProductCriteriaQuery params = new ProductCriteriaQueryBuilder()
                 .build();
         System.out.println(params.getQuery());
-        List<Product> result = productRepository.listByCriteria(params);
+        List<Product> result = null;
+        try {
+            result = productRepository.listByCriteria(params);
+        } catch (Exception e) {
+            Assertions.fail();
+        }
         Assertions.assertEquals(6,result.size());
     }
 

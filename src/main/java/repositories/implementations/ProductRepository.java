@@ -23,7 +23,7 @@ public class ProductRepository implements ProductRepositoryInterface {
     }
 
     @Override
-    public List<Product> listByCriteria(ProductCriteriaQuery criteria) {
+    public List<Product> listByCriteria(ProductCriteriaQuery criteria) throws Exception {
         try {
             Statement statement = dataBase.createStatement();
             String query = criteria.getQuery();
@@ -43,7 +43,7 @@ public class ProductRepository implements ProductRepositoryInterface {
             return list;
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
+            throw new Exception("Failed to get list by criteria.");
         }
     }
 
@@ -138,7 +138,7 @@ public class ProductRepository implements ProductRepositoryInterface {
 
     @Override
     public int getQuantity(Long id) throws Exception {
-        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.DELETE_PRODUCT)) {
+        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.GET_PRODUCT_QUANTITY)) {
 
             preparedStatement.setLong(1, id);
 
@@ -157,6 +157,8 @@ public class ProductRepository implements ProductRepositoryInterface {
 
     @Override
     public int decreaseQuantity(Long id, int quantity) throws Exception {
+        final boolean oldAutoCommit = dataBase.getAutoCommit();
+        dataBase.setAutoCommit(false);
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CHANGE_PRODUCT_QUANTITY)) {
 
             preparedStatement.setInt(1, -quantity);
@@ -169,12 +171,18 @@ public class ProductRepository implements ProductRepositoryInterface {
             return getQuantity(id);
         } catch (SQLException e) {
             e.printStackTrace();
+            dataBase.rollback();
             throw new Exception("Cannot decrease product quantity.");
+        } finally {
+            dataBase.commit();
+            dataBase.setAutoCommit(oldAutoCommit);
         }
     }
 
     @Override
     public int increaseQuantity(Long id, int quantity) throws Exception {
+        final boolean oldAutoCommit = dataBase.getAutoCommit();
+        dataBase.setAutoCommit(false);
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CHANGE_PRODUCT_QUANTITY)) {
 
             preparedStatement.setInt(1, quantity);
@@ -187,12 +195,18 @@ public class ProductRepository implements ProductRepositoryInterface {
             return getQuantity(id);
         } catch (SQLException e) {
             e.printStackTrace();
+            dataBase.rollback();
             throw new Exception("Cannot increase product quantity.");
+        } finally {
+            dataBase.commit();
+            dataBase.setAutoCommit(oldAutoCommit);
         }
     }
 
     @Override
     public double updatePrice(Long id, double price) throws Exception {
+        final boolean oldAutoCommit = dataBase.getAutoCommit();
+        dataBase.setAutoCommit(false);
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.SET_PRODUCT_PRICE)) {
 
             preparedStatement.setDouble(1, price);
@@ -205,7 +219,11 @@ public class ProductRepository implements ProductRepositoryInterface {
             return read(id).getPrice();
         } catch (SQLException e) {
             e.printStackTrace();
+            dataBase.rollback();
             throw new Exception("Cannot set product price.");
+        } finally {
+            dataBase.commit();
+            dataBase.setAutoCommit(oldAutoCommit);
         }
     }
 
