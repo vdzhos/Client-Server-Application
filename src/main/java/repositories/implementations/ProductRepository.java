@@ -24,22 +24,21 @@ public class ProductRepository implements ProductRepositoryInterface {
 
     @Override
     public List<Product> listByCriteria(ProductCriteriaQuery criteria) throws Exception {
-        try {
-            Statement statement = dataBase.createStatement();
+        try (Statement statement = dataBase.createStatement()) {
             String query = criteria.getQuery();
-            ResultSet result = statement.executeQuery(query);
-            int size = result.getFetchSize();
-            List<Product> list = new ArrayList<>(size);
-            while(result.next()){
-                long id = result.getLong("id");
-                String name = result.getString("name");
-                double price = result.getDouble("price");
-                int quantity = result.getInt("quantity");
-                long groupId = result.getLong("groupId");
-                list.add(new Product(id,name,price,quantity,groupId));
+            List<Product> list;
+            try (ResultSet result = statement.executeQuery(query)) {
+                int size = result.getFetchSize();
+                list = new ArrayList<>(size);
+                while(result.next()){
+                    long id = result.getLong("id");
+                    String name = result.getString("name");
+                    double price = result.getDouble("price");
+                    int quantity = result.getInt("quantity");
+                    long groupId = result.getLong("groupId");
+                    list.add(new Product(id,name,price,quantity,groupId));
+                }
             }
-            result.close();
-            statement.close();
             return list;
         } catch (SQLException e) {
             e.printStackTrace();
