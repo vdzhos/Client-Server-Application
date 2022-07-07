@@ -41,6 +41,13 @@ public class DataBase {
         st.close();
     }
 
+    public Statement createStatement() throws SQLException {
+        return conn.createStatement();
+    }
+
+    public PreparedStatement prepareStatement(String query) throws SQLException {
+        return conn.prepareStatement(query);
+    }
 
 
 }

@@ -17,39 +17,31 @@ public class ProductGroup {
     private Long id;
     private String name;
 
-    private List<Product> products;
-
-    public ProductGroup(Long id, String name) {
-        this.id = id;
-        this.name = name;
-        products = new ArrayList<>();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductGroup that = (ProductGroup) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(products, that.products);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, products);
+        return Objects.hash(id, name);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        for (Product product : products) {
-            sb.append(product.getName()).append(",");
-        }
-        sb.deleteCharAt(sb.length()-1).append("]");
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("[");
+//        for (Product product : products) {
+//            sb.append(product.getName()).append(",");
+//        }
+//        sb.deleteCharAt(sb.length()-1).append("]");
         return "ProductGroup{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", products=" + sb.toString() +
+//                ", products=" + sb.toString() +
                 '}';
     }
 }

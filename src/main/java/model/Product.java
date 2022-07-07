@@ -16,19 +16,21 @@ public class Product {
     private Double price;
     private Integer quantity;
 
-    private ProductGroup productGroup;
+    private Long groupId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(id, product.id) && Objects.equals(name, product.name) && Objects.equals(price, product.price) && Objects.equals(quantity, product.quantity) && Objects.equals(productGroup, product.productGroup);
+        return Objects.equals(id, product.id) && Objects.equals(name, product.name) &&
+                Objects.equals(price, product.price) && Objects.equals(quantity, product.quantity) &&
+                Objects.equals(groupId, product.groupId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, price, quantity, productGroup);
+        return Objects.hash(id, name, price, quantity, groupId);
     }
 
     @Override
@@ -38,7 +40,7 @@ public class Product {
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", quantity=" + quantity +
-                ", productGroup=" + productGroup.getName() +
+                ", productGroupId=" + groupId +
                 '}';
     }
 }
