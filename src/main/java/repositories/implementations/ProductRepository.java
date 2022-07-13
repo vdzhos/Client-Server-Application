@@ -88,11 +88,11 @@ public class ProductRepository implements ProductRepositoryInterface {
                     Long groupId = resultSet.getLong("groupId");
                     return new Product(resId, name, price, quantity, groupId);
                 } else
-                    throw new Exception("Creating product failed.");
+                    throw new Exception("Getting product failed.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new Exception("Creating product failed.");
+            throw new Exception("Getting product failed.");
         }
     }
 

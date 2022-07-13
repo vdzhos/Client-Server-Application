@@ -38,4 +38,31 @@ public class ProductCriteriaQueryBuilder {
         return this;
     }
 
+    public ProductCriteriaQueryBuilder setProperty(String name, String value) throws Exception{
+        try{
+            switch (name){
+                case "textInName":
+                    setTextInName(value);
+                    break;
+                case "lowerQuantity":
+                    setLowerQuantity(Integer.parseInt(value));
+                    break;
+                case "upperQuantity":
+                    setUpperQuantity(Integer.parseInt(value));
+                    break;
+                case "lowerPrice":
+                    setLowerPrice(Double.parseDouble(value));
+                    break;
+                case "upperPrice":
+                    setUpperPrice(Double.parseDouble(value));
+                    break;
+                default:
+                    throw new Exception("No such property!");
+            }
+        }catch (NumberFormatException e){
+            throw new Exception("Incorrect parameter value type!");
+        }
+        return this;
+    }
+
 }
