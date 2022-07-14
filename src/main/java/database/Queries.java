@@ -25,6 +25,14 @@ public class Queries {
             "name text not null unique" +
             ");";
 
+    public static final String CREATE_TABLE_USER =
+            "create table if not exists user" +
+            "(" +
+            "id integer primary key autoincrement," +
+            "name text not null unique," +
+            "password text not null" +
+            ");";
+
     public static final String CREATE_PRODUCT = "insert into product (name, price, quantity, groupId) values(?, ?, ?, ?)";
     public static final String READ_PRODUCT = "select * from product where id = ?";
     public static final String UPDATE_PRODUCT = "update product set name = ?, price = ?, quantity = ?, groupId = ? where id = ?";
@@ -46,5 +54,7 @@ public class Queries {
     public static final String UPDATE_GROUP = "update product_group set name = ? where id = ?;";
 
     public static final String DELETE_GROUP = "delete from product_group where id = ?;";
+
+    public static final String GET_USER = "select * from user where name = ?;";
 
 }

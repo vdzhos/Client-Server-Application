@@ -35,6 +35,8 @@ public class DataBase {
         st.execute(Queries.ENABLE_FOREIGN_KEY);
         st.execute(Queries.CREATE_TABLE_GROUP);
         st.execute(Queries.CREATE_TABLE_PRODUCT);
+        st.execute(Queries.CREATE_TABLE_USER);
+//        st.execute("insert into user values (1, 'user', '4297f44b13955235245b2497399d7a93')"); //123123 - password
         st.close();
     }
 

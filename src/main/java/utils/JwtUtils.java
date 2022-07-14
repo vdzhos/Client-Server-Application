@@ -14,11 +14,13 @@ import java.util.Map;
 
 public class JwtUtils {
 
-    private static final String API_KEY = "LhnudKb_pXMZcah4cQVBmXJwx6S5gvXGg1yL2QnBWBg";
+    private static final String API_KEY = "33743677397A24432646294A404E635266556A586E5A7234753778214125442A472D4B6150645367566B59703373357638792F423F4528482B4D625165546857";
 
     public static final String ISSUER = "ua.com.supra.drift";
     public static final String USERNAME_PARAM = "username";
     public static final String ISSUER_PARAM = "issuer";
+    public static final String JWT_HEADER_NAME = "JWT";
+
 
 
     private static final int TOTAL_MILLIS = 900000;
@@ -34,9 +36,9 @@ public class JwtUtils {
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
         JwtBuilder builder = Jwts.builder()
-                .setIssuedAt(now)
-                .setSubject(username)
+                .claim(USERNAME_PARAM, username)
                 .setIssuer(ISSUER)
+                .setIssuedAt(now)
                 .signWith(signingKey, signatureAlgorithm);
 
         if (TOTAL_MILLIS >= 0) {
@@ -56,7 +58,7 @@ public class JwtUtils {
                 .parseClaimsJws(jwt).getBody();
 
         Map<String, String> parsedJwt = new HashMap<>();
-        parsedJwt.put(USERNAME_PARAM, claims.getSubject());
+        parsedJwt.put(USERNAME_PARAM, (String) claims.get(USERNAME_PARAM));
         parsedJwt.put(ISSUER_PARAM, claims.getIssuer());
 
         return parsedJwt;

@@ -7,6 +7,8 @@ import com.sun.net.httpserver.HttpsServer;
 import controllers.GroupController;
 import controllers.LoginController;
 import controllers.ProductController;
+import repositories.implementations.UserRepository;
+import repositories.interfaces.UserRepositoryInterface;
 import services.implementations.GroupService;
 import services.implementations.ProductService;
 import utils.EndPoints;
@@ -64,6 +66,7 @@ public class OurHttpsServer {
 
         ProductService productService = new ProductService();
         GroupService groupService = new GroupService();
+        UserRepositoryInterface userRepository = new UserRepository();
 
         OurAuthenticator authenticator = new OurAuthenticator();
 
@@ -71,7 +74,7 @@ public class OurHttpsServer {
         c1.setAuthenticator(authenticator);
         HttpContext c2 = server.createContext(EndPoints.GROUPS,new GroupController(groupService));
         c2.setAuthenticator(authenticator);
-        server.createContext(EndPoints.LOGIN,new LoginController());
+        server.createContext(EndPoints.LOGIN,new LoginController(userRepository));
 
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
