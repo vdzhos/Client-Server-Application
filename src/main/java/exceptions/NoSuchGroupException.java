@@ -1,8 +1,10 @@
 package exceptions;
 
+import utils.FailureStatusCodes;
+
 public class NoSuchGroupException extends ExceptionWithStatusCode{
 
-    public static final int STATUS_CODE = 404;
+    public static final int STATUS_CODE = FailureStatusCodes.NOT_FOUND;
 
     public NoSuchGroupException(Long id) {
         super("There is no group with id = " + id);

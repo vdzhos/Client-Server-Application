@@ -1,8 +1,10 @@
 package exceptions;
 
+import utils.FailureStatusCodes;
+
 public class DataConflictException extends ExceptionWithStatusCode{
 
-    public static final int STATUS_CODE = 409;
+    public static final int STATUS_CODE = FailureStatusCodes.CONFLICT;
 
     public DataConflictException(String message) {
         super(message);

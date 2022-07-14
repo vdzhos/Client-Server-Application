@@ -1,6 +1,6 @@
 package utils;
 
-public class SuccessfulStatusCodes {
+public class SuccessStatusCodes {
 
     public static final int OK = 200;
     public static final int CREATED = 201;

@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import services.interfaces.ProductServiceInterface;
 import utils.EndPoints;
 import utils.HttpsUtils;
-import utils.SuccessfulStatusCodes;
+import utils.SuccessStatusCodes;
 import utils.Utils;
 
 import java.io.IOException;
@@ -63,7 +63,7 @@ public class ProductController implements HttpHandler {
         long id = HttpsUtils.getId(uri,2);
         Product product = productService.getProduct(id);
         byte[] body = HttpsUtils.jsonResponseToBytes("product",new JSONObject(product));
-        HttpsUtils.sendResponse(exchange,body, SuccessfulStatusCodes.OK);
+        HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.OK);
     }
 
     private void getProductsByCriteria(HttpExchange exchange) throws ExceptionWithStatusCode, IOException {
@@ -71,7 +71,7 @@ public class ProductController implements HttpHandler {
         HttpsUtils.verifyQuery(query);
         List<Product> list = productService.listProductsByCriteria(HttpsUtils.parseQuery(query));
         byte[] body = HttpsUtils.jsonResponseToBytes("products",list);
-        HttpsUtils.sendResponse(exchange,body,SuccessfulStatusCodes.OK);
+        HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.OK);
     }
 
     private void processPOST(HttpExchange exchange) throws IOException {
@@ -84,7 +84,7 @@ public class ProductController implements HttpHandler {
                 Product product = Utils.jsonToProduct(json,null);
                 Product res = productService.addProduct(product);
                 byte[] body = HttpsUtils.jsonResponseToBytes("product",new JSONObject(res));
-                HttpsUtils.sendResponse(exchange,body,SuccessfulStatusCodes.CREATED);
+                HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.CREATED);
             } else {
                 throw new IncorrectPathException(uri);
             }
@@ -106,7 +106,7 @@ public class ProductController implements HttpHandler {
                 Product product = Utils.jsonToProduct(json,id);
                 Product res = productService.updateProduct(product);
                 byte[] body = HttpsUtils.jsonResponseToBytes("product", new JSONObject(res));
-                HttpsUtils.sendResponse(exchange,body,SuccessfulStatusCodes.OK);
+                HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.OK);
             } else {
                 throw new IncorrectPathException(uri);
             }
@@ -123,7 +123,7 @@ public class ProductController implements HttpHandler {
             if(Pattern.matches(EndPoints.PRODUCTS_WITH_ID_REGEX, uri)){
                 long id = HttpsUtils.getId(uri, 2);
                 productService.deleteProduct(id);
-                HttpsUtils.sendResponse(exchange, new byte[0],SuccessfulStatusCodes.NO_CONTENT);
+                HttpsUtils.sendResponse(exchange, new byte[0], SuccessStatusCodes.NO_CONTENT);
             } else {
                 throw new IncorrectPathException(uri);
             }

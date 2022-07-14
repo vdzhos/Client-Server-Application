@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import services.interfaces.GroupServiceInterface;
 import utils.EndPoints;
 import utils.HttpsUtils;
-import utils.SuccessfulStatusCodes;
+import utils.SuccessStatusCodes;
 import utils.Utils;
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class GroupController implements HttpHandler {
                 long id = HttpsUtils.getId(uri,2);
                 ProductGroup group = groupService.getGroup(id);
                 byte[] body = HttpsUtils.jsonResponseToBytes("group",new JSONObject(group));
-                HttpsUtils.sendResponse(exchange,body, SuccessfulStatusCodes.OK);
+                HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.OK);
             } else {
                 throw new IncorrectPathException(uri);
             }
@@ -69,7 +69,7 @@ public class GroupController implements HttpHandler {
                 ProductGroup group = Utils.jsonToGroup(json,null);
                 ProductGroup res = groupService.addGroup(group);
                 byte[] body = HttpsUtils.jsonResponseToBytes("group",new JSONObject(res));
-                HttpsUtils.sendResponse(exchange,body,SuccessfulStatusCodes.CREATED);
+                HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.CREATED);
             } else {
                 throw new IncorrectPathException(uri);
             }
@@ -91,7 +91,7 @@ public class GroupController implements HttpHandler {
                 ProductGroup group = Utils.jsonToGroup(json,id);
                 ProductGroup res = groupService.updateGroup(group);
                 byte[] body = HttpsUtils.jsonResponseToBytes("group", new JSONObject(res));
-                HttpsUtils.sendResponse(exchange,body,SuccessfulStatusCodes.OK);
+                HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.OK);
             } else {
                 throw new IncorrectPathException(uri);
             }
@@ -108,7 +108,7 @@ public class GroupController implements HttpHandler {
             if(Pattern.matches(EndPoints.GROUPS_WITH_ID_REGEX, uri)){
                 long id = HttpsUtils.getId(uri, 2);
                 groupService.deleteGroup(id);
-                HttpsUtils.sendResponse(exchange, new byte[0],SuccessfulStatusCodes.NO_CONTENT);
+                HttpsUtils.sendResponse(exchange, new byte[0], SuccessStatusCodes.NO_CONTENT);
             } else {
                 throw new IncorrectPathException(uri);
             }
