@@ -7,8 +7,10 @@ import org.json.JSONObject;
 import services.interfaces.ProductServiceInterface;
 import utils.EndPoints;
 import utils.HttpsUtils;
+import utils.Utils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -43,6 +45,7 @@ public class ProductController implements HttpHandler {
             if(Pattern.matches(EndPoints.PRODUCTS + "[/ ]*",uri.getPath())){
                 getProductsByCriteria(exchange);
             }else {
+                //TODO("400 response status if wrong path")
                 getSingleProduct(exchange, uri);
             }
         }catch (IOException e){
@@ -67,8 +70,26 @@ public class ProductController implements HttpHandler {
         HttpsUtils.sendResponse(exchange,body,200);
     }
 
-    private void processPOST(HttpExchange exchange) {
-
+    private void processPOST(HttpExchange exchange) throws IOException {
+        String uri = exchange.getRequestURI().getPath();
+        try{
+            if(Pattern.matches(EndPoints.PRODUCTS + "[/ ]*",uri)){
+                InputStream in = exchange.getRequestBody();
+                String jsonString = new String(in.readAllBytes());
+                JSONObject json = new JSONObject(jsonString);
+                Product product = Utils.jsonToProduct(json,false);
+                Product res = productService.addProduct(product);
+                byte[] body = HttpsUtils.jsonResponseToBytes("product",new JSONObject(res));
+                HttpsUtils.sendResponse(exchange,body,200);
+            } else {
+                //TODO("400 response status if wrong path")
+            }
+        }catch (IOException e){
+            HttpsUtils.sendResponse(exchange,HttpsUtils.jsonResponseToBytes("error",e.getMessage()),500);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            HttpsUtils.sendResponse(exchange,HttpsUtils.jsonResponseToBytes("error",e.getMessage()),409);
+        }
     }
 
     private void processPUT(HttpExchange exchange) {

@@ -1,5 +1,9 @@
 package utils;
 
+import model.Product;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Random;
@@ -24,6 +28,26 @@ public class Utils {
         return BigDecimal.valueOf(price)
                 .setScale(precision, RoundingMode.HALF_UP)
                 .doubleValue();
+    }
+
+    public static Product jsonToProduct(JSONObject json, boolean idNecessary) throws Exception {
+        Long id = null;
+        try{
+            id = json.getLong("id");
+        }catch (JSONException e){
+            if(idNecessary){
+                throw new Exception("Id for product is wrong/missing!");
+            }
+        }
+        try{
+            String name = json.getString("name");
+            Double price = json.getDouble("price");
+            Integer quantity = json.getInt("quantity");
+            Long groupId = json.getLong("groupId");
+            return new Product(id,name,price,quantity,groupId);
+        }catch (JSONException e){
+            throw new Exception("Necessary data is wrong/missing!");
+        }
     }
 
 }
