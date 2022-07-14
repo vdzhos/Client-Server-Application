@@ -2,6 +2,8 @@ package services.implementations;
 
 import database.ProductCriteriaQuery;
 import database.ProductCriteriaQueryBuilder;
+import exceptions.DataConflictException;
+import exceptions.ExceptionWithStatusCode;
 import exceptions.NoSuchProductException;
 import model.Product;
 import repositories.implementations.ProductRepository;
@@ -18,26 +20,26 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public Product addProduct(Product product) throws Exception {
-        if(product.getPrice() <= 0) throw new Exception("Price of the product must be greater than zero!");
-        if(product.getQuantity() < 0) throw new Exception("Quantity of the product must not be negative!");
+    public Product addProduct(Product product) throws ExceptionWithStatusCode {
+        if(product.getPrice() <= 0) throw new DataConflictException("Price of the product must be greater than zero!");
+        if(product.getQuantity() < 0) throw new DataConflictException("Quantity of the product must not be negative!");
         return repository.create(product);
     }
 
     @Override
-    public Product getProduct(Long id) throws NoSuchProductException {
+    public Product getProduct(Long id) throws ExceptionWithStatusCode {
         return repository.read(id);
     }
 
     @Override
-    public Product updateProduct(Product product) throws Exception {
-        if(product.getPrice() <= 0) throw new Exception("Price of the product must be greater than zero!");
-        if(product.getQuantity() < 0) throw new Exception("Quantity of the product must not be negative!");
+    public Product updateProduct(Product product) throws ExceptionWithStatusCode {
+        if(product.getPrice() <= 0) throw new DataConflictException("Price of the product must be greater than zero!");
+        if(product.getQuantity() < 0) throw new DataConflictException("Quantity of the product must not be negative!");
         return repository.update(product);
     }
 
     @Override
-    public void deleteProduct(Long id) throws Exception {
+    public void deleteProduct(Long id) throws ExceptionWithStatusCode {
         repository.delete(id);
     }
 
@@ -65,7 +67,7 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public List<Product> listProductsByCriteria(ProductCriteriaQuery criteria) throws Exception {
+    public List<Product> listProductsByCriteria(ProductCriteriaQuery criteria) throws ExceptionWithStatusCode {
         ProductCriteriaQuery params;
         if(criteria==null) {
             params = new ProductCriteriaQueryBuilder().build();

@@ -2,18 +2,18 @@ package repositories.implementations;
 
 import database.DataBase;
 import database.ProductCriteriaQuery;
+import exceptions.DataConflictException;
+import exceptions.InternalException;
+import exceptions.ExceptionWithStatusCode;
 import exceptions.NoSuchProductException;
 import model.Product;
 import database.Queries;
+import org.sqlite.SQLiteErrorCode;
 import repositories.interfaces.ProductRepositoryInterface;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import java.sql.PreparedStatement;
 
 public class ProductRepository implements ProductRepositoryInterface {
 
@@ -24,7 +24,7 @@ public class ProductRepository implements ProductRepositoryInterface {
     }
 
     @Override
-    public List<Product> listByCriteria(ProductCriteriaQuery criteria) throws Exception {
+    public List<Product> listByCriteria(ProductCriteriaQuery criteria) throws ExceptionWithStatusCode {
         try (Statement statement = dataBase.createStatement()) {
             String query = criteria.getQuery();
             List<Product> list;
@@ -43,12 +43,12 @@ public class ProductRepository implements ProductRepositoryInterface {
             return list;
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new Exception("Failed to get list by criteria.");
+            throw new InternalException("Failed to get list by criteria.");
         }
     }
 
     @Override
-    public Product create(Product product) throws Exception {
+    public Product create(Product product) throws ExceptionWithStatusCode {
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CREATE_PRODUCT, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, product.getName());
@@ -58,24 +58,28 @@ public class ProductRepository implements ProductRepositoryInterface {
 
             int insertedRows = preparedStatement.executeUpdate();
             if (insertedRows != 1)
-                throw new Exception("Creating product failed.");
+                throw new InternalException("Product creation failed.");
 
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next())
                     product.setId(generatedKeys.getLong(1));
                 else
-                    throw new Exception("Creating product failed.");
+                    throw new InternalException("Product creation failed.");
             }
 
         } catch (SQLException e) {
-            throw new Exception("Creating product failed.");
+            if(e.getErrorCode() == SQLiteErrorCode.SQLITE_CONSTRAINT.code){
+                throw new DataConflictException("Constraint violation in product creation!");
+            } else{
+                throw new InternalException("Product creation failed.");
+            }
         }
 
         return product;
     }
 
     @Override
-    public Product read(Long id) throws NoSuchProductException {
+    public Product read(Long id) throws ExceptionWithStatusCode {
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.READ_PRODUCT)) {
 
             preparedStatement.setLong(1, id);
@@ -93,12 +97,12 @@ public class ProductRepository implements ProductRepositoryInterface {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new NoSuchProductException(id);
+            throw new InternalException("Reading product failed.");
         }
     }
 
     @Override
-    public Product update(Product product) throws Exception {
+    public Product update(Product product) throws ExceptionWithStatusCode {
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.UPDATE_PRODUCT)) {
 
             preparedStatement.setString(1, product.getName());
@@ -113,14 +117,18 @@ public class ProductRepository implements ProductRepositoryInterface {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new Exception("Updating product failed.");
+            if(e.getErrorCode() == SQLiteErrorCode.SQLITE_CONSTRAINT.code){
+                throw new DataConflictException("Constraint violation in product update!");
+            } else{
+                throw new InternalException("Updating product failed.");
+            }
         }
 
         return product;
     }
 
     @Override
-    public void delete(Long id) throws Exception {
+    public void delete(Long id) throws ExceptionWithStatusCode {
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.DELETE_PRODUCT)) {
 
             preparedStatement.setLong(1, id);
@@ -131,7 +139,7 @@ public class ProductRepository implements ProductRepositoryInterface {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new Exception("Deleting product failed.");
+            throw new InternalException("Deleting product failed.");
         }
     }
 

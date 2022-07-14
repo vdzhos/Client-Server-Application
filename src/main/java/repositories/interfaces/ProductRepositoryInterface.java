@@ -1,16 +1,17 @@
 package repositories.interfaces;
 
 import database.ProductCriteriaQuery;
+import exceptions.ExceptionWithStatusCode;
 import model.Product;
 
 import java.util.List;
 
 public interface ProductRepositoryInterface {
 
-    Product create(Product product) throws Exception;
-    Product read(Long id) throws Exception;
-    Product update(Product group) throws Exception;
-    void delete(Long id) throws Exception;
+    Product create(Product product) throws ExceptionWithStatusCode;
+    Product read(Long id) throws ExceptionWithStatusCode;
+    Product update(Product group) throws ExceptionWithStatusCode;
+    void delete(Long id) throws ExceptionWithStatusCode;
 
     int getQuantity(Long id) throws Exception;
     int decreaseQuantity(Long id, int quantity) throws Exception;

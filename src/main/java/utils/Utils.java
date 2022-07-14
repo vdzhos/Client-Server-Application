@@ -1,6 +1,8 @@
 package utils;
 
+import exceptions.DataConflictException;
 import model.Product;
+import model.ProductGroup;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,15 +32,7 @@ public class Utils {
                 .doubleValue();
     }
 
-    public static Product jsonToProduct(JSONObject json, boolean idNecessary) throws Exception {
-        Long id = null;
-        try{
-            id = json.getLong("id");
-        }catch (JSONException e){
-            if(idNecessary){
-                throw new Exception("Id for product is wrong/missing!");
-            }
-        }
+    public static Product jsonToProduct(JSONObject json, Long id) throws DataConflictException {
         try{
             String name = json.getString("name");
             Double price = json.getDouble("price");
@@ -46,7 +40,16 @@ public class Utils {
             Long groupId = json.getLong("groupId");
             return new Product(id,name,price,quantity,groupId);
         }catch (JSONException e){
-            throw new Exception("Necessary data is wrong/missing!");
+            throw new DataConflictException("Necessary data is wrong/missing!");
+        }
+    }
+
+    public static ProductGroup jsonToGroup(JSONObject json, Long id) throws DataConflictException {
+        try{
+            String name = json.getString("name");
+            return new ProductGroup(id,name);
+        }catch (JSONException e){
+            throw new DataConflictException("Necessary data is wrong/missing!");
         }
     }
 
