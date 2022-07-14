@@ -2,6 +2,7 @@ package repositories.implementations;
 
 import database.DataBase;
 import database.ProductCriteriaQuery;
+import exceptions.NoSuchProductException;
 import model.Product;
 import database.Queries;
 import repositories.interfaces.ProductRepositoryInterface;
@@ -74,7 +75,7 @@ public class ProductRepository implements ProductRepositoryInterface {
     }
 
     @Override
-    public Product read(Long id) throws Exception {
+    public Product read(Long id) throws NoSuchProductException {
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.READ_PRODUCT)) {
 
             preparedStatement.setLong(1, id);
@@ -88,11 +89,11 @@ public class ProductRepository implements ProductRepositoryInterface {
                     Long groupId = resultSet.getLong("groupId");
                     return new Product(resId, name, price, quantity, groupId);
                 } else
-                    throw new Exception("Getting product failed.");
+                    throw new NoSuchProductException(id);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new Exception("Getting product failed.");
+            throw new NoSuchProductException(id);
         }
     }
 
@@ -108,7 +109,7 @@ public class ProductRepository implements ProductRepositoryInterface {
 
             int updatedRows = preparedStatement.executeUpdate();
             if (updatedRows != 1)
-                throw new Exception("Updating product failed.");
+                throw new NoSuchProductException(product.getId());
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,7 +127,7 @@ public class ProductRepository implements ProductRepositoryInterface {
 
             int deletedRows = preparedStatement.executeUpdate();
             if (deletedRows != 1)
-                throw new Exception("Deleting product failed.");
+                throw new NoSuchProductException(id);
 
         } catch (SQLException e) {
             e.printStackTrace();

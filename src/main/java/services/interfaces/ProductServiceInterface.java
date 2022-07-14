@@ -1,14 +1,15 @@
 package services.interfaces;
 
 import database.ProductCriteriaQuery;
+import exceptions.NoSuchProductException;
 import model.Product;
 import java.util.List;
 
 public interface ProductServiceInterface {
 
     Product addProduct(Product product) throws Exception;
-    Product getProduct(Long id) throws Exception;
-    Product updateProduct(Product group) throws Exception;
+    Product getProduct(Long id) throws NoSuchProductException;
+    Product updateProduct(Product product) throws Exception;
     void deleteProduct(Long id) throws Exception;
 
     int getProductQuantity(Long id) throws Exception;

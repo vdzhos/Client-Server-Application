@@ -2,6 +2,7 @@ package services.implementations;
 
 import database.ProductCriteriaQuery;
 import database.ProductCriteriaQueryBuilder;
+import exceptions.NoSuchProductException;
 import model.Product;
 import repositories.implementations.ProductRepository;
 import services.interfaces.ProductServiceInterface;
@@ -24,7 +25,7 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public Product getProduct(Long id) throws Exception {
+    public Product getProduct(Long id) throws NoSuchProductException {
         return repository.read(id);
     }
 

@@ -4,6 +4,7 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import database.ProductCriteriaQuery;
 import database.ProductCriteriaQueryBuilder;
+import exceptions.IncorrectPathException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -16,23 +17,25 @@ import java.util.regex.Pattern;
 
 public class HttpsUtils {
 
-    public static Long getId(String uri, int idIndex) throws Exception{
+    public static Long getId(String uri, int idIndex) throws IncorrectPathException {
         String[] split = Arrays.stream(uri.split("/")).filter(it -> !it.isEmpty()).toArray(String[]::new);
-        if(split.length > idIndex+1) throw new Exception("Incorrect path: " + uri + "!");
+        if(split.length > idIndex+1)
+            throw new IncorrectPathException(uri);
         String id = split[idIndex];
         try {
             return Long.parseLong(id);
         }catch (NumberFormatException e){
-            throw new Exception("Incorrect path: " + uri + "!");
+            throw new IncorrectPathException(uri);
         }
     }
 
-    public static void verifyQuery(String query) throws Exception{
+    public static void verifyQuery(String query) throws IncorrectPathException {
         boolean res = query == null || Pattern.matches("(?:&?[^=&]*=[^=&]*)*",query);
-        if(!res) throw new Exception("Incorrect query: " + query + "!");
+        if(!res)
+            throw new IncorrectPathException(query);
     }
 
-    public static ProductCriteriaQuery parseQuery(String query) throws Exception {
+    public static ProductCriteriaQuery parseQuery(String query) throws IncorrectPathException {
         HashMap<String,String> params = new HashMap<>();
         if(query!=null){
             String[] split = query.split("&");
@@ -43,8 +46,12 @@ public class HttpsUtils {
             }
         }
         ProductCriteriaQueryBuilder builder = new ProductCriteriaQueryBuilder();
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            builder.setProperty(entry.getKey(),entry.getValue());
+        try {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                builder.setProperty(entry.getKey(), entry.getValue());
+            }
+        } catch (Exception e) {
+            throw new IncorrectPathException(query);
         }
         return builder.build();
     }
@@ -56,11 +63,16 @@ public class HttpsUtils {
     }
 
     public static void sendResponse(HttpExchange exchange, byte[] body, int status) throws IOException {
-        exchange.getResponseHeaders().set("Content-Type", "application/json");
-        exchange.sendResponseHeaders(status, body.length);
-        OutputStream os = exchange.getResponseBody();
-        os.write(body);
-        os.close();
+        int length = body.length;
+        if (length > 0) {
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(status, body.length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(body);
+            os.close();
+        } else {
+            exchange.sendResponseHeaders(status, -1);
+        }
     }
 
 }
