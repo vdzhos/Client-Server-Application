@@ -36,10 +36,10 @@ public class JwtUtils {
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
         JwtBuilder builder = Jwts.builder()
-                .claim(USERNAME_PARAM, username)
+                .setSubject(username)
                 .setIssuer(ISSUER)
                 .setIssuedAt(now)
-                .signWith(signingKey, signatureAlgorithm);
+                .signWith(signatureAlgorithm, signingKey);
 
         if (TOTAL_MILLIS >= 0) {
             long expMillis = nowMillis + TOTAL_MILLIS;
@@ -58,7 +58,7 @@ public class JwtUtils {
                 .parseClaimsJws(jwt).getBody();
 
         Map<String, String> parsedJwt = new HashMap<>();
-        parsedJwt.put(USERNAME_PARAM, (String) claims.get(USERNAME_PARAM));
+        parsedJwt.put(USERNAME_PARAM, claims.getSubject());
         parsedJwt.put(ISSUER_PARAM, claims.getIssuer());
 
         return parsedJwt;
