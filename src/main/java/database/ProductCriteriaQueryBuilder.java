@@ -33,6 +33,16 @@ public class ProductCriteriaQueryBuilder {
         return this;
     }
 
+    public ProductCriteriaQueryBuilder setTextInDescription(java.lang.String value) {
+        object.setTextInDescription(value);
+        return this;
+    }
+
+    public ProductCriteriaQueryBuilder setTextInManufacturer(java.lang.String value) {
+        object.setTextInManufacturer(value);
+        return this;
+    }
+
     public ProductCriteriaQueryBuilder setUpperQuantity(java.lang.Integer value) {
         object.setUpperQuantity(value);
         return this;
@@ -43,6 +53,12 @@ public class ProductCriteriaQueryBuilder {
             switch (name){
                 case "textInName":
                     setTextInName(value);
+                    break;
+                case "textInDescription":
+                    setTextInDescription(value);
+                    break;
+                case "textInManufacturer":
+                    setTextInManufacturer(value);
                     break;
                 case "lowerQuantity":
                     setLowerQuantity(Integer.parseInt(value));

@@ -12,6 +12,8 @@ public class ProductCriteriaQuery {
     private List<Long> groupIds;
 
     private String textInName;
+    private String textInDescription;
+    private String textInManufacturer;
 
     private Integer lowerQuantity;
     private Integer upperQuantity;
@@ -38,6 +40,20 @@ public class ProductCriteriaQuery {
             firstCondition(sb,firstCondition);
             sb.append("product.name like '%")
                     .append(textInName)
+                    .append("%'");
+            firstCondition = false;
+        }
+        if(textInDescription!=null) {
+            firstCondition(sb,firstCondition);
+            sb.append("product.description like '%")
+                    .append(textInDescription)
+                    .append("%'");
+            firstCondition = false;
+        }
+        if(textInManufacturer!=null) {
+            firstCondition(sb,firstCondition);
+            sb.append("product.manufacturer like '%")
+                    .append(textInManufacturer)
                     .append("%'");
             firstCondition = false;
         }
