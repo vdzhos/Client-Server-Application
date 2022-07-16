@@ -15,6 +15,7 @@ import utils.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class GroupController implements HttpHandler {
@@ -36,6 +37,8 @@ public class GroupController implements HttpHandler {
             processPUT(exchange);
         } else if(method.equals("DELETE")){
             processDELETE(exchange);
+        } else if(method.equals("OPTIONS")) {
+            processOPTIONS(exchange);
         } else {
             throw new RuntimeException("There is no such method handler!");
         }
@@ -45,10 +48,9 @@ public class GroupController implements HttpHandler {
         String uri = exchange.getRequestURI().getPath();
         try{
             if(Pattern.matches(EndPoints.GROUPS_WITH_ID_REGEX, uri)){
-                long id = HttpsUtils.getId(uri,2);
-                ProductGroup group = groupService.getGroup(id);
-                byte[] body = HttpsUtils.jsonResponseToBytes("group",new JSONObject(group));
-                HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.OK);
+                getSingleGroup(exchange, uri);
+            } else if(Pattern.matches(EndPoints.GROUPS, uri)) {
+                getGroupsByCriteria(exchange);
             } else {
                 throw new IncorrectPathException(uri);
             }
@@ -119,4 +121,23 @@ public class GroupController implements HttpHandler {
         }
     }
 
+    private void processOPTIONS(HttpExchange exchange) throws IOException {
+        byte[] body = (new JSONObject()).toString().getBytes();
+        HttpsUtils.sendResponse(exchange,body,SuccessStatusCodes.OK);
+    }
+
+    private void getSingleGroup(HttpExchange exchange, String uri) throws ExceptionWithStatusCode, IOException {
+        long id = HttpsUtils.getId(uri,2);
+        ProductGroup group = groupService.getGroup(id);
+        byte[] body = HttpsUtils.jsonResponseToBytes("group",new JSONObject(group));
+        HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.OK);
+    }
+
+    private void getGroupsByCriteria(HttpExchange exchange) throws ExceptionWithStatusCode, IOException {
+        String query = exchange.getRequestURI().getQuery();
+        HttpsUtils.verifyQuery(query);
+        List<ProductGroup> list = groupService.listGroupsByCriteria(HttpsUtils.parseGroupQuery(query));
+        byte[] body = HttpsUtils.jsonResponseToBytes("groups",list);
+        HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.OK);
+    }
 }

@@ -1,10 +1,16 @@
 package services.implementations;
 
+import database.ProductCriteriaQuery;
+import database.ProductCriteriaQueryBuilder;
+import database.ProductGroupCriteriaQuery;
+import database.ProductGroupCriteriaQueryBuilder;
 import exceptions.ExceptionWithStatusCode;
 import exceptions.NoSuchGroupException;
 import model.ProductGroup;
 import repositories.implementations.GroupRepository;
 import services.interfaces.GroupServiceInterface;
+
+import java.util.List;
 
 public class GroupService implements GroupServiceInterface {
 
@@ -32,6 +38,17 @@ public class GroupService implements GroupServiceInterface {
     @Override
     public void deleteGroup(Long id) throws ExceptionWithStatusCode {
         repository.delete(id);
+    }
+
+    @Override
+    public List<ProductGroup> listGroupsByCriteria(ProductGroupCriteriaQuery criteria) throws ExceptionWithStatusCode {
+        ProductGroupCriteriaQuery params;
+        if(criteria==null) {
+            params = new ProductGroupCriteriaQueryBuilder().build();
+        } else {
+            params = criteria;
+        }
+        return repository.listByCriteria(params);
     }
 
 }

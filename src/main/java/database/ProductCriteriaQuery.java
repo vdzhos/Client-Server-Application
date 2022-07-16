@@ -28,7 +28,7 @@ public class ProductCriteriaQuery {
         sb.append(Queries.GET_PRODUCTS_BY_CRITERIA_JOIN);
         boolean firstCondition = true;
         if(groupIds!=null && groupIds.size()!=0) {
-            firstCondition(sb,firstCondition);
+            firstCondition(sb, firstCondition);
             sb.append("groupId in (");
             for (Long id: groupIds){
                 sb.append(id).append(',');

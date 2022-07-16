@@ -2,8 +2,7 @@ package utils;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import database.ProductCriteriaQuery;
-import database.ProductCriteriaQueryBuilder;
+import database.*;
 import exceptions.IncorrectPathException;
 import org.json.JSONObject;
 
@@ -12,7 +11,6 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HttpsUtils {
@@ -35,7 +33,7 @@ public class HttpsUtils {
             throw new IncorrectPathException(query);
     }
 
-    public static ProductCriteriaQuery parseQuery(String query) throws IncorrectPathException {
+    public static ProductCriteriaQuery parseProductQuery(String query) throws IncorrectPathException {
         HashMap<String,String> params = new HashMap<>();
         if(query!=null){
             String[] split = query.split("&");
@@ -46,6 +44,27 @@ public class HttpsUtils {
             }
         }
         ProductCriteriaQueryBuilder builder = new ProductCriteriaQueryBuilder();
+        try {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                builder.setProperty(entry.getKey(), entry.getValue());
+            }
+        } catch (Exception e) {
+            throw new IncorrectPathException(query);
+        }
+        return builder.build();
+    }
+
+    public static ProductGroupCriteriaQuery parseGroupQuery(String query) throws IncorrectPathException {
+        HashMap<String,String> params = new HashMap<>();
+        if(query!=null){
+            String[] split = query.split("&");
+            for (String param : split) {
+                String[] paramSplit = param.split("=");
+                String value = paramSplit.length > 1 ? paramSplit[1] : "";
+                params.put(paramSplit[0],value);
+            }
+        }
+        ProductGroupCriteriaQueryBuilder builder = new ProductGroupCriteriaQueryBuilder();
         try {
             for (Map.Entry<String, String> entry : params.entrySet()) {
                 builder.setProperty(entry.getKey(), entry.getValue());

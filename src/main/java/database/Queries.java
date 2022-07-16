@@ -50,6 +50,8 @@ public class Queries {
                 "product.quantity, product.groupId, product_group.name as group_name " +
             "from product inner join product_group on product.groupId = product_group.id";
 
+    public static final String GET_GROUPS = "select * from product_group";
+
     public static final String DELETE_ALL_FROM_PRODUCT = "delete from product";
 
     public static final String DELETE_ALL_FROM_GROUP = "delete from product_group";

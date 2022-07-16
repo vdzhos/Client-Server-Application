@@ -1,6 +1,5 @@
 package controllers;
 
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import exceptions.ExceptionWithStatusCode;
@@ -72,7 +71,7 @@ public class ProductController implements HttpHandler {
     private void getProductsByCriteria(HttpExchange exchange) throws ExceptionWithStatusCode, IOException {
         String query = exchange.getRequestURI().getQuery();
         HttpsUtils.verifyQuery(query);
-        List<Product> list = productService.listProductsByCriteria(HttpsUtils.parseQuery(query));
+        List<Product> list = productService.listProductsByCriteria(HttpsUtils.parseProductQuery(query));
         byte[] body = HttpsUtils.jsonResponseToBytes("products",list);
         HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.OK);
     }
