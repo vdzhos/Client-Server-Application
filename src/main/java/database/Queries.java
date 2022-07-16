@@ -9,6 +9,8 @@ public class Queries {
             "(" +
             "id integer primary key autoincrement," +
             "name text not null unique," +
+            "description text not null," +
+            "manufacturer text not null," +
             "price real not null," +
             "quantity integer not null," +
             "groupId integer not null," +
@@ -33,16 +35,18 @@ public class Queries {
             "password text not null" +
             ");";
 
-    public static final String CREATE_PRODUCT = "insert into product (name, price, quantity, groupId) values(?, ?, ?, ?)";
+    public static final String CREATE_PRODUCT = "insert into product (name, description, manufacturer, price, quantity, groupId) values(?, ?, ?, ?, ?, ?)";
     public static final String READ_PRODUCT = "select * from product where id = ?";
-    public static final String UPDATE_PRODUCT = "update product set name = ?, price = ?, quantity = ?, groupId = ? where id = ?";
+    public static final String UPDATE_PRODUCT = "update product set name = ?, description = ?, manufacturer = ?, price = ?, quantity = ?, groupId = ? where id = ?";
     public static final String DELETE_PRODUCT = "delete from product where id = ?";
 
     public static final String GET_PRODUCT_QUANTITY = "select quantity from product where id = ?";
     public static final String CHANGE_PRODUCT_QUANTITY = "update product set quantity = quantity + ? where id = ?";
     public static final String SET_PRODUCT_PRICE = "update product set price = ? where id = ?";
 
-    public static final String GET_PRODUCTS_BY_CRITERIA_JOIN = "select product.id, product.name, product.price, product.quantity, product.groupId, product_group.name as group_name " +
+    public static final String GET_PRODUCTS_BY_CRITERIA_JOIN =
+            "select product.id, product.name, product.description, product.manufacturer, product.price, " +
+                "product.quantity, product.groupId, product_group.name as group_name " +
             "from product inner join product_group on product.groupId = product_group.id";
 
     public static final String DELETE_ALL_FROM_PRODUCT = "delete from product";

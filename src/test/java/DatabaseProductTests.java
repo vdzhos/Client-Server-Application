@@ -42,18 +42,18 @@ public class DatabaseProductTests {
         gr2.next();
         long id2 = gr2.getLong("id");
         gr2.close();
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('product1',150.20,215," + id1 + ")");
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('product2',253.50,134," + id1 + ")");
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('prod3',178.99,59," + id1 + ")");
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('prod4',29.00,1566," + id2 + ")");
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('prod5',99.99,100," + id2 + ")");
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('product6',500.50,12," + id2 + ")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('product1','description','manufacturer',150.20,215," + id1 + ")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('product2','description','manufacturer',253.50,134," + id1 + ")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('prod3','description','manufacturer',178.99,59," + id1 + ")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('prod4','description','manufacturer',29.00,1566," + id2 + ")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('prod5','description','manufacturer',99.99,100," + id2 + ")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('product6','description','manufacturer',500.50,12," + id2 + ")");
 
         st.close();
     }
@@ -102,6 +102,8 @@ public class DatabaseProductTests {
     }
 
     private Product createProductWithName(String name) {
+        String description = "description";
+        String manufacturer = "manufacturer";
         double price = 10.2;
         int quantity = 10;
         long groupId = 1;
@@ -114,7 +116,7 @@ public class DatabaseProductTests {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return new Product(null, name, price, quantity, groupId);
+        return new Product(null, name, description, manufacturer, price, quantity, groupId);
     }
 
     private Long getProductIdByName(String name) {

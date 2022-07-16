@@ -34,11 +34,13 @@ public class ProductRepository implements ProductRepositoryInterface {
                 while(result.next()){
                     long id = result.getLong("id");
                     String name = result.getString("name");
+                    String description = result.getString("description");
+                    String manufacturer = result.getString("manufacturer");
                     double price = result.getDouble("price");
                     int quantity = result.getInt("quantity");
                     long groupId = result.getLong("groupId");
                     String groupName = result.getString("group_name");
-                    list.add(new Product(id,name,price,quantity,groupId,groupName));
+                    list.add(new Product(id,name,description,manufacturer,price,quantity,groupId,groupName));
                 }
             }
             return list;
@@ -53,9 +55,11 @@ public class ProductRepository implements ProductRepositoryInterface {
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CREATE_PRODUCT, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, product.getName());
-            preparedStatement.setDouble(2, product.getPrice());
-            preparedStatement.setInt(3, product.getQuantity());
-            preparedStatement.setLong(4, product.getGroupId());
+            preparedStatement.setString(2, product.getDescription());
+            preparedStatement.setString(3, product.getManufacturer());
+            preparedStatement.setDouble(4, product.getPrice());
+            preparedStatement.setInt(5, product.getQuantity());
+            preparedStatement.setLong(6, product.getGroupId());
 
             int insertedRows = preparedStatement.executeUpdate();
             if (insertedRows != 1)
@@ -89,10 +93,12 @@ public class ProductRepository implements ProductRepositoryInterface {
                 if (resultSet.next()) {
                     Long resId = resultSet.getLong("id");
                     String name = resultSet.getString("name");
+                    String description = resultSet.getString("description");
+                    String manufacturer = resultSet.getString("manufacturer");
                     Double price = resultSet.getDouble("price");
                     Integer quantity = resultSet.getInt("quantity");
                     Long groupId = resultSet.getLong("groupId");
-                    return new Product(resId, name, price, quantity, groupId);
+                    return new Product(resId, name, description, manufacturer, price, quantity, groupId);
                 } else
                     throw new NoSuchProductException(id);
             }
@@ -107,10 +113,12 @@ public class ProductRepository implements ProductRepositoryInterface {
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.UPDATE_PRODUCT)) {
 
             preparedStatement.setString(1, product.getName());
-            preparedStatement.setDouble(2, product.getPrice());
-            preparedStatement.setInt(3, product.getQuantity());
-            preparedStatement.setLong(4, product.getGroupId());
-            preparedStatement.setLong(5, product.getId());
+            preparedStatement.setString(2, product.getDescription());
+            preparedStatement.setString(3, product.getManufacturer());
+            preparedStatement.setDouble(4, product.getPrice());
+            preparedStatement.setInt(5, product.getQuantity());
+            preparedStatement.setLong(6, product.getGroupId());
+            preparedStatement.setLong(7, product.getId());
 
             int updatedRows = preparedStatement.executeUpdate();
             if (updatedRows != 1)

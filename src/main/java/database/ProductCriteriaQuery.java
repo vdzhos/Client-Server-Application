@@ -36,7 +36,7 @@ public class ProductCriteriaQuery {
         }
         if(textInName!=null) {
             firstCondition(sb,firstCondition);
-            sb.append("name like '%")
+            sb.append("product.name like '%")
                     .append(textInName)
                     .append("%'");
             firstCondition = false;

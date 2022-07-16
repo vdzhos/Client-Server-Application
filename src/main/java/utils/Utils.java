@@ -35,10 +35,12 @@ public class Utils {
     public static Product jsonToProduct(JSONObject json, Long id) throws DataConflictException {
         try{
             String name = json.getString("name");
+            String description = json.getString("description");
+            String manufacturer = json.getString("manufacturer");
             Double price = json.getDouble("price");
             Integer quantity = json.getInt("quantity");
             Long groupId = json.getLong("groupId");
-            return new Product(id,name,price,quantity,groupId);
+            return new Product(id,name,description,manufacturer,price,quantity,groupId);
         }catch (JSONException e){
             throw new DataConflictException("Necessary data is wrong/missing!");
         }
