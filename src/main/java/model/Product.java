@@ -18,6 +18,16 @@ public class Product {
 
     private Long groupId;
 
+    private String groupName;
+
+    public Product(Long id, String name, Double price, Integer quantity, Long groupId) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.groupId = groupId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -25,12 +35,12 @@ public class Product {
         Product product = (Product) o;
         return Objects.equals(id, product.id) && Objects.equals(name, product.name) &&
                 Objects.equals(price, product.price) && Objects.equals(quantity, product.quantity) &&
-                Objects.equals(groupId, product.groupId);
+                Objects.equals(groupId, product.groupId) && Objects.equals(groupName, product.groupName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, price, quantity, groupId);
+        return Objects.hash(id, name, price, quantity, groupId, groupName);
     }
 
     @Override
@@ -40,7 +50,8 @@ public class Product {
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", quantity=" + quantity +
-                ", productGroupId=" + groupId +
+                ", groupId=" + groupId +
+                ", groupName='" + groupName + '\'' +
                 '}';
     }
 }

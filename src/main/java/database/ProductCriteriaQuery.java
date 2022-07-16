@@ -23,7 +23,7 @@ public class ProductCriteriaQuery {
 
     public String getQuery(){
         StringBuilder sb = new StringBuilder();
-        sb.append("select * from product");
+        sb.append(Queries.GET_PRODUCTS_BY_CRITERIA_JOIN);
         boolean firstCondition = true;
         if(groupIds!=null && groupIds.size()!=0) {
             firstCondition(sb,firstCondition);

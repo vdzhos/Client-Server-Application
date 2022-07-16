@@ -42,6 +42,8 @@ public class Queries {
     public static final String CHANGE_PRODUCT_QUANTITY = "update product set quantity = quantity + ? where id = ?";
     public static final String SET_PRODUCT_PRICE = "update product set price = ? where id = ?";
 
+    public static final String GET_PRODUCTS_BY_CRITERIA_JOIN = "select product.id, product.name, product.price, product.quantity, product.groupId, product_group.name as group_name " +
+            "from product inner join product_group on product.groupId = product_group.id";
 
     public static final String DELETE_ALL_FROM_PRODUCT = "delete from product";
 

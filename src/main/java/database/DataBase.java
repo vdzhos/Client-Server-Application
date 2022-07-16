@@ -56,6 +56,14 @@ public class DataBase {
         return conn.getAutoCommit();
     }
 
+    public void setIsolationLevel(int level) throws SQLException {
+        conn.setTransactionIsolation(level);
+    }
+
+    public int getIsolationLevel() throws SQLException {
+        return conn.getTransactionIsolation();
+    }
+
     public void setAutoCommit(boolean autoCommit) throws SQLException {
         conn.setAutoCommit(autoCommit);
     }

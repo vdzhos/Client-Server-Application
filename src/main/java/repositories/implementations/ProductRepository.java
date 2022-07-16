@@ -37,7 +37,8 @@ public class ProductRepository implements ProductRepositoryInterface {
                     double price = result.getDouble("price");
                     int quantity = result.getInt("quantity");
                     long groupId = result.getLong("groupId");
-                    list.add(new Product(id,name,price,quantity,groupId));
+                    String groupName = result.getString("group_name");
+                    list.add(new Product(id,name,price,quantity,groupId,groupName));
                 }
             }
             return list;
@@ -165,6 +166,8 @@ public class ProductRepository implements ProductRepositoryInterface {
     @Override
     public int decreaseQuantity(Long id, int quantity) throws Exception {
         final boolean oldAutoCommit = dataBase.getAutoCommit();
+        final int oldIsolation = dataBase.getIsolationLevel();
+        dataBase.setIsolationLevel(Connection.TRANSACTION_SERIALIZABLE);
         dataBase.setAutoCommit(false);
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CHANGE_PRODUCT_QUANTITY)) {
 
@@ -186,12 +189,15 @@ public class ProductRepository implements ProductRepositoryInterface {
         } finally {
             dataBase.commit();
             dataBase.setAutoCommit(oldAutoCommit);
+            dataBase.setIsolationLevel(oldIsolation);
         }
     }
 
     @Override
     public int increaseQuantity(Long id, int quantity) throws Exception {
         final boolean oldAutoCommit = dataBase.getAutoCommit();
+        final int oldIsolation = dataBase.getIsolationLevel();
+        dataBase.setIsolationLevel(Connection.TRANSACTION_SERIALIZABLE);
         dataBase.setAutoCommit(false);
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CHANGE_PRODUCT_QUANTITY)) {
 
@@ -210,6 +216,7 @@ public class ProductRepository implements ProductRepositoryInterface {
         } finally {
             dataBase.commit();
             dataBase.setAutoCommit(oldAutoCommit);
+            dataBase.setIsolationLevel(oldIsolation);
         }
     }
 

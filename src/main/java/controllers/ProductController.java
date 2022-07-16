@@ -1,5 +1,6 @@
 package controllers;
 
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import exceptions.ExceptionWithStatusCode;
@@ -37,7 +38,9 @@ public class ProductController implements HttpHandler {
             processPUT(exchange);
         } else if(method.equals("DELETE")){
             processDELETE(exchange);
-        } else {
+        } else if(method.equals("OPTIONS")){
+            processOPTIONS(exchange);
+        } else{
             throw new RuntimeException("There is no such method handler!");
         }
     }
@@ -132,6 +135,11 @@ public class ProductController implements HttpHandler {
         } catch (IOException e){
             HttpsUtils.sendResponse(exchange,HttpsUtils.jsonResponseToBytes("error",e.getMessage()),InternalException.STATUS_CODE);
         }
+    }
+
+    private void processOPTIONS(HttpExchange exchange) throws IOException {
+        byte[] body = (new JSONObject()).toString().getBytes();
+        HttpsUtils.sendResponse(exchange,body,SuccessStatusCodes.OK);
     }
 
 }
