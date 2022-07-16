@@ -52,7 +52,7 @@ public class LoginController implements HttpHandler {
             User user = userRepository.getUserByUsername(username);
             if(user.getPassword().equals(hashedPassword)) {
                 Headers headers = exchange.getResponseHeaders();
-                headers.add("Access-Control-Allow-Origin", "*");
+//                headers.add("Access-Control-Allow-Origin", "*");
                 headers.add(JwtUtils.JWT_HEADER_NAME, JwtUtils.createJWT(username));
                 HttpsUtils.sendResponse(exchange, new byte[0], SuccessStatusCodes.OK);
             } else {

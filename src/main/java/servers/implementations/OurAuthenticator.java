@@ -36,6 +36,7 @@ public class OurAuthenticator extends Authenticator {
             e.printStackTrace();
             Headers headers = exchange.getResponseHeaders();
             headers.add("Access-Control-Allow-Origin", "*");
+            headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             headers.add("Access-Control-Allow-Headers", "Jwt");
             return new Failure(FailureStatusCodes.FORBIDDEN);
         }

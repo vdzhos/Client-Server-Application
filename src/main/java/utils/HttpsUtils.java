@@ -83,12 +83,13 @@ public class HttpsUtils {
 
     public static void sendResponse(HttpExchange exchange, byte[] body, int status) throws IOException {
         int length = body.length;
+        Headers headers = exchange.getResponseHeaders();
+        headers.add("Access-Control-Allow-Origin", "*");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        headers.add("Access-Control-Allow-Headers", "Jwt");
 
         if (length > 0) {
-            Headers headers = exchange.getResponseHeaders();
             headers.add("Content-Type", "application/json");
-            headers.add("Access-Control-Allow-Origin", "*");
-            headers.add("Access-Control-Allow-Headers", "Jwt");
             exchange.sendResponseHeaders(status, body.length);
             OutputStream os = exchange.getResponseBody();
             os.write(body);
