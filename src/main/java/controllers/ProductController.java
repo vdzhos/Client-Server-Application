@@ -51,6 +51,8 @@ public class ProductController implements HttpHandler {
                 getProductsByCriteria(exchange);
             }else if(Pattern.matches(EndPoints.PRODUCTS_WITH_ID_REGEX, uri)){
                 getSingleProduct(exchange, uri);
+            } else if(Pattern.matches(EndPoints.PRODUCT_QUANTITY_BY_ID_REGEX, uri)) {
+                getProductQuantity(exchange, uri);
             } else {
                 throw new IncorrectPathException(uri);
             }
@@ -59,6 +61,13 @@ public class ProductController implements HttpHandler {
         } catch (IOException e){
             HttpsUtils.sendResponse(exchange,HttpsUtils.jsonResponseToBytes("error",e.getMessage()), InternalException.STATUS_CODE);
         }
+    }
+
+    private void getProductQuantity(HttpExchange exchange, String uri) throws ExceptionWithStatusCode, IOException {
+        long id = HttpsUtils.getId(uri,3);
+        int quantity = productService.getProductQuantity(id);
+        byte[] body = HttpsUtils.jsonResponseToBytes("quantity",quantity);
+        HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.OK);
     }
 
     private void getSingleProduct(HttpExchange exchange, String uri) throws ExceptionWithStatusCode, IOException {
@@ -87,6 +96,10 @@ public class ProductController implements HttpHandler {
                 Product res = productService.addProduct(product);
                 byte[] body = HttpsUtils.jsonResponseToBytes("product",new JSONObject(res));
                 HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.CREATED);
+            } else if (Pattern.matches(EndPoints.PRODUCT_INCREASE_QUANTITY_BY_ID_REGEX, uri)){
+                processIncreaseDecreaseQuantity(exchange,uri,true);
+            } else if(Pattern.matches(EndPoints.PRODUCT_DECREASE_QUANTITY_BY_ID_REGEX, uri)) {
+                processIncreaseDecreaseQuantity(exchange,uri,false);
             } else {
                 throw new IncorrectPathException(uri);
             }
@@ -95,6 +108,19 @@ public class ProductController implements HttpHandler {
         } catch (IOException e){
             HttpsUtils.sendResponse(exchange,HttpsUtils.jsonResponseToBytes("error",e.getMessage()),InternalException.STATUS_CODE);
         }
+    }
+
+    private void processIncreaseDecreaseQuantity(HttpExchange exchange,String uri,boolean increase) throws IOException, ExceptionWithStatusCode {
+        long id = HttpsUtils.getId(uri,3);
+        InputStream in = exchange.getRequestBody();
+        String jsonString = new String(in.readAllBytes());
+        JSONObject json = new JSONObject(jsonString);
+        int quantity = Utils.jsonGetQuantity(json);
+        int newQuantity;
+        if(increase) newQuantity = productService.increaseProductQuantity(id,quantity);
+        else newQuantity = productService.decreaseProductQuantity(id,quantity);
+        byte[] body = HttpsUtils.jsonResponseToBytes("quantity",newQuantity);
+        HttpsUtils.sendResponse(exchange,body, SuccessStatusCodes.OK);
     }
 
     private void processPUT(HttpExchange exchange) throws IOException {

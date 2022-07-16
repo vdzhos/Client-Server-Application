@@ -50,19 +50,19 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public int getProductQuantity(Long id) throws Exception {
+    public int getProductQuantity(Long id) throws ExceptionWithStatusCode {
         return productRepository.getQuantity(id);
     }
 
     @Override
-    public int decreaseProductQuantity(Long id, int quantity) throws Exception {
-        if(quantity < 0) throw new Exception("Quantity of the product must not be negative!");
+    public int decreaseProductQuantity(Long id, int quantity) throws ExceptionWithStatusCode {
+        if(quantity < 0) throw new DataConflictException("Quantity of the product must not be negative!");
         return productRepository.decreaseQuantity(id,quantity);
     }
 
     @Override
-    public int increaseProductQuantity(Long id, int quantity) throws Exception {
-        if(quantity < 0) throw new Exception("Quantity of the product must not be negative!");
+    public int increaseProductQuantity(Long id, int quantity) throws ExceptionWithStatusCode {
+        if(quantity < 0) throw new DataConflictException("Quantity of the product must not be negative!");
         return productRepository.increaseQuantity(id,quantity);
     }
 
