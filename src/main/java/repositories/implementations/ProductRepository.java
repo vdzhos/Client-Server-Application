@@ -252,4 +252,25 @@ public class ProductRepository implements ProductRepositoryInterface {
         }
     }
 
+    @Override
+    public double getTotalPrice(Long id) throws InternalException {
+        try (PreparedStatement preparedStatement = dataBase.prepareStatement(id == null ? Queries.GET_TOTAL_PRODUCT_PRICE
+                : Queries.GET_TOTAL_PRODUCT_PRICE_BY_GROUP_ID)) {
+
+            if(id!=null) {
+                preparedStatement.setLong(1, id);
+            }
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getDouble(1);
+                } else
+                    throw new InternalException("Total product price getting failed.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new InternalException("Total product price getting failed.");
+        }
+    }
+
 }

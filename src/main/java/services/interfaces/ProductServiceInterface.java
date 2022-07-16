@@ -2,6 +2,8 @@ package services.interfaces;
 
 import database.ProductCriteriaQuery;
 import exceptions.ExceptionWithStatusCode;
+import exceptions.InternalException;
+import exceptions.NoSuchGroupException;
 import exceptions.NoSuchProductException;
 import model.Product;
 import java.util.List;
@@ -19,5 +21,7 @@ public interface ProductServiceInterface {
     double updateProductPrice(Long id, double price) throws Exception;
 
     List<Product> listProductsByCriteria(ProductCriteriaQuery criteria) throws ExceptionWithStatusCode;
+
+    double getTotalPrice(Long id) throws InternalException, NoSuchGroupException;
 
 }

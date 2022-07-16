@@ -2,6 +2,7 @@ package repositories.interfaces;
 
 import database.ProductCriteriaQuery;
 import exceptions.ExceptionWithStatusCode;
+import exceptions.InternalException;
 import model.Product;
 
 import java.util.List;
@@ -20,5 +21,6 @@ public interface ProductRepositoryInterface {
 
     List<Product> listByCriteria(ProductCriteriaQuery criteria) throws ExceptionWithStatusCode;
 
+    double getTotalPrice(Long id) throws InternalException;
 
 }

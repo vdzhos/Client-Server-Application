@@ -147,30 +147,6 @@ public class DatabaseProductGroupTests {
     }
 
     @Test
-    void testDeleteGroupFailedForeignKeyViolation() {
-        try (Statement st = db.createStatement()) {
-            String name = "group1";
-            long id1;
-            try (ResultSet gr1 = st.executeQuery("SELECT id FROM product_group WHERE name = '"+name+"'")) {
-                gr1.next();
-                id1 = gr1.getLong("id");
-            }
-            try {
-                groupService.deleteGroup(id1);
-                try (ResultSet groupSize = st.executeQuery("SELECT COUNT(*) FROM product_group")) {
-                    groupSize.next();
-                    long size = groupSize.getLong(1);
-                    Assertions.fail();
-                }
-            } catch (Exception e) {
-                Assertions.assertTrue(true);
-            }
-        } catch (SQLException e) {
-            Assertions.fail();
-        }
-    }
-
-    @Test
     void testDeleteGroupFailedNoSuchGroup() {
         try (Statement st = db.createStatement()) {
             st.execute(Queries.DELETE_ALL_FROM_PRODUCT);
@@ -195,7 +171,6 @@ public class DatabaseProductGroupTests {
                 id1 = gr1.getLong("id");
             }
             try {
-                st.execute(Queries.DELETE_ALL_FROM_PRODUCT);
                 groupService.deleteGroup(id1);
                 try (ResultSet groupSize = st.executeQuery("SELECT COUNT(*) FROM product_group")) {
                     groupSize.next();

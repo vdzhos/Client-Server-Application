@@ -1,14 +1,12 @@
 package repositories.implementations;
 
 import database.DataBase;
-import database.ProductCriteriaQuery;
 import database.ProductGroupCriteriaQuery;
 import database.Queries;
 import exceptions.DataConflictException;
 import exceptions.ExceptionWithStatusCode;
 import exceptions.InternalException;
 import exceptions.NoSuchGroupException;
-import model.Product;
 import model.ProductGroup;
 import org.sqlite.SQLiteErrorCode;
 import repositories.interfaces.GroupRepositoryInterface;
@@ -127,6 +125,17 @@ public class GroupRepository implements GroupRepositoryInterface {
         }
     }
 
+    @Override
+    public boolean existsById(Long id) throws InternalException {
+        try (PreparedStatement st = dataBase.prepareStatement(Queries.READ_GROUP)){
+            st.setLong(1,id);
+            try (ResultSet result = st.executeQuery()) {
+                return result.next();
+            }
+        } catch (SQLException e) {
+            throw new InternalException("Reading group failed.");
+        }
+    }
 
 
 }

@@ -17,7 +17,7 @@ public class Queries {
             "foreign key (groupId)" +
             "   references product_group (id)" +
             "       on update cascade" +
-            "       on delete restrict" +
+            "       on delete cascade" +
             ");";
 
     public static final String CREATE_TABLE_GROUP =
@@ -65,5 +65,10 @@ public class Queries {
     public static final String DELETE_GROUP = "delete from product_group where id = ?;";
 
     public static final String GET_USER = "select * from user where name = ?;";
+
+    public static final String GET_TOTAL_PRODUCT_PRICE = "select sum(price * quantity) from product;";
+    public static final String GET_TOTAL_PRODUCT_PRICE_BY_GROUP_ID = "select sum(price * quantity) from product where groupId = ?;";
+
+
 
 }
