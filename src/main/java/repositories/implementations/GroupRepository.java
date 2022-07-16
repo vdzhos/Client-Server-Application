@@ -27,6 +27,7 @@ public class GroupRepository implements GroupRepositoryInterface {
     public ProductGroup create(ProductGroup group) throws ExceptionWithStatusCode{
         try (PreparedStatement st = dataBase.prepareStatement(Queries.CREATE_GROUP, Statement.RETURN_GENERATED_KEYS)) {
             st.setString(1,group.getName());
+            st.setString(2,group.getDescription());
             int rowsAffected = st.executeUpdate();
             if(rowsAffected!=1){
                 throw new InternalException("ProductGroup creation failed");
@@ -55,7 +56,8 @@ public class GroupRepository implements GroupRepositoryInterface {
             try (ResultSet result = st.executeQuery()) {
                 if(result.next()){
                     String name = result.getString("name");
-                    return new ProductGroup(id,name);
+                    String description = result.getString("description");
+                    return new ProductGroup(id, name, description);
                 }else{
                     throw new NoSuchGroupException(id);
                 }
@@ -69,7 +71,8 @@ public class GroupRepository implements GroupRepositoryInterface {
     public ProductGroup update(ProductGroup group) throws ExceptionWithStatusCode {
         try (PreparedStatement st = dataBase.prepareStatement(Queries.UPDATE_GROUP)) {
             st.setString(1,group.getName());
-            st.setLong(2,group.getId());
+            st.setString(2,group.getDescription());
+            st.setLong(3,group.getId());
             int rowsAffected = st.executeUpdate();
             if(rowsAffected!=1){
                 throw new NoSuchGroupException(group.getId());

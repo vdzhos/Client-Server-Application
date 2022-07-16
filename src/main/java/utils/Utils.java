@@ -49,7 +49,8 @@ public class Utils {
     public static ProductGroup jsonToGroup(JSONObject json, Long id) throws DataConflictException {
         try{
             String name = json.getString("name");
-            return new ProductGroup(id,name);
+            String description = json.getString("description");
+            return new ProductGroup(id, name, description);
         }catch (JSONException e){
             throw new DataConflictException("Necessary data is wrong/missing!");
         }

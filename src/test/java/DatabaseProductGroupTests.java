@@ -29,8 +29,8 @@ public class DatabaseProductGroupTests {
         Statement st = db.createStatement();
         st.execute(Queries.DELETE_ALL_FROM_PRODUCT);
         st.execute(Queries.DELETE_ALL_FROM_GROUP);
-        st.execute("INSERT INTO product_group (name) VALUES ('group1')");
-        st.execute("INSERT INTO product_group (name) VALUES ('group2')");
+        st.execute("INSERT INTO product_group (name, description) VALUES ('group1', 'description1')");
+        st.execute("INSERT INTO product_group (name, description) VALUES ('group2', 'description1')");
         ResultSet gr1 = st.executeQuery("SELECT id FROM product_group WHERE name = 'group1'");
         gr1.next();
         long id1 = gr1.getLong("id");
@@ -39,18 +39,18 @@ public class DatabaseProductGroupTests {
         gr2.next();
         long id2 = gr2.getLong("id");
         gr2.close();
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('product1',150.20,215,"+id1+")");
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('product2',253.50,134,"+id1+")");
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('prod3',178.99,59,"+id1+")");
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('prod4',29.00,1566,"+id2+")");
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('prod5',99.99,100,"+id2+")");
-        st.execute("INSERT INTO product (name, price, quantity, groupId) " +
-                "VALUES ('product6',500.50,12,"+id2+")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('product1','description','manufacturer',150.20,215," + id1 + ")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('product2','description','manufacturer',253.50,134," + id1 + ")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('prod3','description','manufacturer',178.99,59," + id1 + ")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('prod4','description','manufacturer',29.00,1566," + id2 + ")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('prod5','description','manufacturer',99.99,100," + id2 + ")");
+        st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
+                "VALUES ('product6','description','manufacturer',500.50,12," + id2 + ")");
 
         st.close();
     }
@@ -58,7 +58,8 @@ public class DatabaseProductGroupTests {
     @Test
     void testCreateGroupSuccess(){
         String name = "group3";
-        ProductGroup pg = new ProductGroup(null,name);
+        String description = "description3";
+        ProductGroup pg = new ProductGroup(null, name, description);
         try {
             ProductGroup group = groupService.addGroup(pg);
             Assertions.assertEquals(group.getName(),name);
@@ -72,7 +73,8 @@ public class DatabaseProductGroupTests {
     @Test
     void testCreateGroupFailure(){
         String name = "group2";
-        ProductGroup pg = new ProductGroup(null,name);
+        String description = "description2";
+        ProductGroup pg = new ProductGroup(null, name, description);
         try {
             ProductGroup group = groupService.addGroup(pg);
             Assertions.fail();
@@ -122,7 +124,7 @@ public class DatabaseProductGroupTests {
                 id1 = gr1.getLong("id");
             }
             try {
-                ProductGroup group = new ProductGroup(id1,"123123123");
+                ProductGroup group = new ProductGroup(id1,"123123123", "Desc123");
                 ProductGroup updated = groupService.updateGroup(group);
                 Assertions.assertEquals(group,updated);
             } catch (Exception e) {
@@ -136,7 +138,7 @@ public class DatabaseProductGroupTests {
     @Test
     void testUpdateGroupFailure(){
         try {
-            ProductGroup group = new ProductGroup(-1L,"123123123");
+            ProductGroup group = new ProductGroup(-1L,"123123123", "Desc123");
             ProductGroup updated = groupService.updateGroup(group);
             Assertions.fail();
         } catch (Exception e) {

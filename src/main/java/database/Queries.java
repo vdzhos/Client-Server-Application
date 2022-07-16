@@ -24,7 +24,8 @@ public class Queries {
             "create table if not exists product_group" +
             "(" +
             "id integer primary key autoincrement," +
-            "name text not null unique" +
+            "name text not null unique," +
+            "description text not null" +
             ");";
 
     public static final String CREATE_TABLE_USER =
@@ -53,11 +54,11 @@ public class Queries {
 
     public static final String DELETE_ALL_FROM_GROUP = "delete from product_group";
 
-    public static final String CREATE_GROUP = "insert into product_group (name) values (?);";
+    public static final String CREATE_GROUP = "insert into product_group (name, description) values (?, ?);";
 
     public static final String READ_GROUP = "select * from product_group where id = ?;";
 
-    public static final String UPDATE_GROUP = "update product_group set name = ? where id = ?;";
+    public static final String UPDATE_GROUP = "update product_group set name = ?, description = ? where id = ?;";
 
     public static final String DELETE_GROUP = "delete from product_group where id = ?;";
 

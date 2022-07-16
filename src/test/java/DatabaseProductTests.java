@@ -32,8 +32,8 @@ public class DatabaseProductTests {
         Statement st = db.createStatement();
         st.execute(Queries.DELETE_ALL_FROM_PRODUCT);
         st.execute(Queries.DELETE_ALL_FROM_GROUP);
-        st.execute("INSERT INTO product_group (name) VALUES ('group1')");
-        st.execute("INSERT INTO product_group (name) VALUES ('group2')");
+        st.execute("INSERT INTO product_group (name, description) VALUES ('group1', 'description1')");
+        st.execute("INSERT INTO product_group (name, description) VALUES ('group2', 'description1')");
         ResultSet gr1 = st.executeQuery("SELECT id FROM product_group WHERE name = 'group1'");
         gr1.next();
         long id1 = gr1.getLong("id");

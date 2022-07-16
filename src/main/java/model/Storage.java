@@ -37,8 +37,8 @@ public class Storage {
         groupMap = new HashMap<>();
         productId = 0;
         groupId = 0;
-        ProductGroup group0 = new ProductGroup(groupId++,"Group0");
-        ProductGroup group1 = new ProductGroup(groupId++,"Group1");
+        ProductGroup group0 = new ProductGroup(groupId++,"Group0", "Description0");
+        ProductGroup group1 = new ProductGroup(groupId++,"Group1", "Description1");
         groupMap.put(group0.getName(),group0);
         groupMap.put(group1.getName(),group1);
 //        for (int i = 0; i < 3; i++) {
