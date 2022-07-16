@@ -14,9 +14,9 @@ public interface ProductRepositoryInterface {
     Product update(Product group) throws ExceptionWithStatusCode;
     void delete(Long id) throws ExceptionWithStatusCode;
 
-    int getQuantity(Long id) throws Exception;
-    int decreaseQuantity(Long id, int quantity) throws Exception;
-    int increaseQuantity(Long id, int quantity) throws Exception;
+    int getQuantity(Long id) throws ExceptionWithStatusCode;
+    int decreaseQuantity(Long id, int quantity) throws ExceptionWithStatusCode;
+    int increaseQuantity(Long id, int quantity) throws ExceptionWithStatusCode;
     double updatePrice(Long id, double price) throws Exception;
 
     List<Product> listByCriteria(ProductCriteriaQuery criteria) throws ExceptionWithStatusCode;

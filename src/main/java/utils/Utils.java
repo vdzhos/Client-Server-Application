@@ -46,6 +46,14 @@ public class Utils {
         }
     }
 
+    public static int jsonGetQuantity(JSONObject json) throws DataConflictException {
+        try{
+            return json.getInt("quantity");
+        }catch (JSONException e){
+            throw new DataConflictException("Necessary data is wrong/missing!");
+        }
+    }
+
     public static ProductGroup jsonToGroup(JSONObject json, Long id) throws DataConflictException {
         try{
             String name = json.getString("name");

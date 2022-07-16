@@ -153,7 +153,7 @@ public class ProductRepository implements ProductRepositoryInterface {
     }
 
     @Override
-    public int getQuantity(Long id) throws Exception {
+    public int getQuantity(Long id) throws ExceptionWithStatusCode {
         try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.GET_PRODUCT_QUANTITY)) {
 
             preparedStatement.setLong(1, id);
@@ -162,69 +162,77 @@ public class ProductRepository implements ProductRepositoryInterface {
                 if (resultSet.next())
                     return resultSet.getInt(1);
                 else
-                    throw new Exception("Cannot get product quantity.");
+                    throw new InternalException("Cannot get product quantity.");
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new Exception("Cannot get product quantity.");
+            throw new InternalException("Cannot get product quantity.");
         }
     }
 
     @Override
-    public int decreaseQuantity(Long id, int quantity) throws Exception {
-        final boolean oldAutoCommit = dataBase.getAutoCommit();
-        final int oldIsolation = dataBase.getIsolationLevel();
-        dataBase.setIsolationLevel(Connection.TRANSACTION_SERIALIZABLE);
-        dataBase.setAutoCommit(false);
-        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CHANGE_PRODUCT_QUANTITY)) {
+    public int decreaseQuantity(Long id, int quantity) throws ExceptionWithStatusCode {
+        try{
+            final boolean oldAutoCommit = dataBase.getAutoCommit();
+            final int oldIsolation = dataBase.getIsolationLevel();
+            dataBase.setIsolationLevel(Connection.TRANSACTION_SERIALIZABLE);
+            dataBase.setAutoCommit(false);
+            try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CHANGE_PRODUCT_QUANTITY)) {
 
-            preparedStatement.setInt(1, -quantity);
-            preparedStatement.setLong(2, id);
+                preparedStatement.setInt(1, -quantity);
+                preparedStatement.setLong(2, id);
 
-            int updatedRows = preparedStatement.executeUpdate();
-            if (updatedRows != 1)
-                throw new Exception("Cannot decrease product quantity.");
+                int updatedRows = preparedStatement.executeUpdate();
+                if (updatedRows != 1)
+                    throw new InternalException("Cannot decrease product quantity.");
 
-            int newQuantity = getQuantity(id);
-            if(newQuantity<0) throw new Exception("Resulting quantity cannot be negative!");
+                int newQuantity = getQuantity(id);
+                if(newQuantity<0) throw new DataConflictException("Resulting quantity cannot be negative!");
 
-            return newQuantity;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            dataBase.rollback();
-            throw new Exception("Cannot decrease product quantity.");
-        } finally {
-            dataBase.commit();
-            dataBase.setAutoCommit(oldAutoCommit);
-            dataBase.setIsolationLevel(oldIsolation);
+                return newQuantity;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                dataBase.rollback();
+                throw new InternalException("Cannot decrease product quantity.");
+            } finally {
+                dataBase.commit();
+                dataBase.setAutoCommit(oldAutoCommit);
+                dataBase.setIsolationLevel(oldIsolation);
+            }
+        }catch (SQLException e){
+            throw new InternalException("Cannot increase product quantity.");
         }
     }
 
     @Override
-    public int increaseQuantity(Long id, int quantity) throws Exception {
-        final boolean oldAutoCommit = dataBase.getAutoCommit();
-        final int oldIsolation = dataBase.getIsolationLevel();
-        dataBase.setIsolationLevel(Connection.TRANSACTION_SERIALIZABLE);
-        dataBase.setAutoCommit(false);
-        try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CHANGE_PRODUCT_QUANTITY)) {
+    public int increaseQuantity(Long id, int quantity) throws ExceptionWithStatusCode {
+        try{
+            final boolean oldAutoCommit = dataBase.getAutoCommit();
+            final int oldIsolation = dataBase.getIsolationLevel();
+            dataBase.setIsolationLevel(Connection.TRANSACTION_SERIALIZABLE);
+            dataBase.setAutoCommit(false);
+            try (PreparedStatement preparedStatement = dataBase.prepareStatement(Queries.CHANGE_PRODUCT_QUANTITY)) {
 
-            preparedStatement.setInt(1, quantity);
-            preparedStatement.setLong(2, id);
+                preparedStatement.setInt(1, quantity);
+                preparedStatement.setLong(2, id);
 
-            int updatedRows = preparedStatement.executeUpdate();
-            if (updatedRows != 1)
-                throw new Exception("Cannot increase product quantity.");
+                int updatedRows = preparedStatement.executeUpdate();
+                if (updatedRows != 1)
+                    throw new InternalException("Cannot increase product quantity.");
 
-            return getQuantity(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            dataBase.rollback();
-            throw new Exception("Cannot increase product quantity.");
-        } finally {
-            dataBase.commit();
-            dataBase.setAutoCommit(oldAutoCommit);
-            dataBase.setIsolationLevel(oldIsolation);
+                return getQuantity(id);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                dataBase.rollback();
+                throw new InternalException("Cannot increase product quantity.");
+            } finally {
+                dataBase.commit();
+                dataBase.setAutoCommit(oldAutoCommit);
+                dataBase.setIsolationLevel(oldIsolation);
+            }
+        } catch (SQLException e){
+            throw new InternalException("Cannot increase product quantity.");
         }
     }
 
