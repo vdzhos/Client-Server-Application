@@ -38,6 +38,7 @@ public class Queries {
 
     public static final String DROP_TABLE_PRODUCTS = "drop table if exists product;";
     public static final String DROP_TABLE_GROUPS = "drop table if exists product_group;";
+    public static final String DROP_TABLE_USER = "drop table if exists user;";
 
     public static final String CREATE_PRODUCT = "insert into product (name, description, manufacturer, price, quantity, groupId) values(?, ?, ?, ?, ?, ?)";
     public static final String READ_PRODUCT = "select * from product where id = ?";
@@ -58,6 +59,8 @@ public class Queries {
     public static final String DELETE_ALL_FROM_PRODUCT = "delete from product";
 
     public static final String DELETE_ALL_FROM_GROUP = "delete from product_group";
+
+    public static final String DELETE_ALL_FROM_USER = "delete from user";
 
     public static final String CREATE_GROUP = "insert into product_group (name, description) values (?, ?);";
 

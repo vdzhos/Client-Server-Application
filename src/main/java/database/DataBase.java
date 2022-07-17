@@ -36,7 +36,6 @@ public class DataBase {
         st.execute(Queries.CREATE_TABLE_GROUP);
         st.execute(Queries.CREATE_TABLE_PRODUCT);
         st.execute(Queries.CREATE_TABLE_USER);
-//        st.execute("insert into user values (1, 'user', '63ee451939ed580ef3c4b6f0109d1fd0')"); //123123 - password
         st.close();
     }
 
