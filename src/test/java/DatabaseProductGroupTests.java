@@ -29,6 +29,8 @@ public class DatabaseProductGroupTests {
         Statement st = db.createStatement();
         st.execute(Queries.DELETE_ALL_FROM_PRODUCT);
         st.execute(Queries.DELETE_ALL_FROM_GROUP);
+        st.execute(Queries.DELETE_ALL_FROM_USER);
+        st.execute("insert into user values (1, 'user', '63ee451939ed580ef3c4b6f0109d1fd0')"); //123123 - password
         st.execute("INSERT INTO product_group (name, description) VALUES ('group1', 'description1')");
         st.execute("INSERT INTO product_group (name, description) VALUES ('group2', 'description1')");
         ResultSet gr1 = st.executeQuery("SELECT id FROM product_group WHERE name = 'group1'");
@@ -51,7 +53,6 @@ public class DatabaseProductGroupTests {
                 "VALUES ('prod5','description','manufacturer',99.99,100," + id2 + ")");
         st.execute("INSERT INTO product (name, description, manufacturer, price, quantity, groupId) " +
                 "VALUES ('product6','description','manufacturer',500.50,12," + id2 + ")");
-
         st.close();
     }
 
