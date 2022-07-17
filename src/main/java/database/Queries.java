@@ -36,6 +36,9 @@ public class Queries {
             "password text not null" +
             ");";
 
+    public static final String DROP_TABLE_PRODUCTS = "drop table if exists product;";
+    public static final String DROP_TABLE_GROUPS = "drop table if exists product_group;";
+
     public static final String CREATE_PRODUCT = "insert into product (name, description, manufacturer, price, quantity, groupId) values(?, ?, ?, ?, ?, ?)";
     public static final String READ_PRODUCT = "select * from product where id = ?";
     public static final String UPDATE_PRODUCT = "update product set name = ?, description = ?, manufacturer = ?, price = ?, quantity = ?, groupId = ? where id = ?";
