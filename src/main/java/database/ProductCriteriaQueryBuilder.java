@@ -1,5 +1,9 @@
 package database;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class ProductCriteriaQueryBuilder {
 
     private ProductCriteriaQuery object = new ProductCriteriaQuery();
@@ -71,6 +75,10 @@ public class ProductCriteriaQueryBuilder {
                     break;
                 case "upperPrice":
                     setUpperPrice(Double.parseDouble(value));
+                    break;
+                case "groupIds":
+                    ArrayList<Long> ids = Arrays.stream(value.split(",")).map(Long::parseLong).collect(Collectors.toCollection(ArrayList::new));
+                    setGroupIds(ids);
                     break;
                 default:
                     throw new Exception("No such property!");
